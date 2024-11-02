@@ -36,7 +36,34 @@ CREATE TABLE IF NOT EXISTS orders (
 
 -- departments
 CREATE TABLE IF NOT EXISTS departments (
-    departmentID SMALLINT PRIMARY KEY AUTOINCREMENT,
+    departmentID INT PRIMARY KEY AUTOINCREMENT,
     departmentName VARCHAR(50) NOT NULL UNIQUE,
     employeeCount SMALLINT NOT NULL DEFAULT 0
+);
+
+-- customers
+CREATE TABLE IF NOT EXISTS customers (
+    customerID VARCHAR(8) NOT NULL PRIMARY KEY,
+    lastOrderID VARCHAR(14),
+    customerName VARCHAR(50) NOT NULL,
+    segment VARCHAR(20) NOT NULL,
+    country VARCHAR(50) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    state VARCHAR(50) NOT NULL,
+    postalCode INT NOT NULL,
+    region VARCHAR(50) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    FOREIGN KEY (lastOrderID) REFERENCES orders(orderID),
+);
+
+-- products
+CREATE TABLE IF NOT EXISTS products (
+    productID VARCHAR(15) NOT NULL PRIMARY KEY,
+    categoryID INT NOT NULL,
+    productName VARCHAR(100) NOT NULL,
+    price DECIMAL(19, 4) NOT NULL,
+    stockCount INT NOT NULL,
+    lastSold DATE NOT NULL,
+    FOREIGN KEY (categoryID) REFERENCES categories(categoryID)
 );
