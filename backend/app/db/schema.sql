@@ -87,6 +87,30 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (productID) REFERENCES products(productID)
 );
 
+-- shipment modes
+CREATE TABLE IF NOT EXISTS shipmentModes (
+    shipModeID INT PRIMARY KEY AUTO_INCREMENT,
+    shipModeName VARCHAR(50) NOT NULL UNIQUE,
+    shipModeDescription TEXT,
+    estimatedShippingTime SMALLINT NOT NULL
+);
+
+-- shipping details
+CREATE TABLE IF NOT EXISTS shippingDetails (
+    shipModeId INT NOT NULL,
+    orderID VARCHAR(14) NOT NULL,
+    cost DECIMAL(11, 2) NOT NULL,
+    shipDate DATETIME NOT NULL,
+    country VARCHAR(50) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    shipmentState VARCHAR(50) NOT NULL,
+    postalCode VARCHAR(50) NOT NULL,
+    region VARCHAR(50) NOT NULL,
+    FOREIGN KEY (shipModeId) REFERENCES shipmentModes(shipModeID),
+    FOREIGN KEY (orderID) REFERENCES orders(orderID),
+    PRIMARY KEY (orderID)
+);
+
 ALTER TABLE customers
 ADD CONSTRAINT fk_lastOrderID FOREIGN KEY (lastOrderID) REFERENCES orders(orderID);
 
