@@ -65,18 +65,13 @@ DROP TABLE IF EXISTS orders;
 CREATE TABLE orders (
     id VARCHAR(14) PRIMARY KEY,
     customerID VARCHAR(8) NOT NULL,
-    productID VARCHAR(15) NOT NULL,
     employeeID INT NOT NULL,
     orderDate DATE NOT NULL,
-    amount DECIMAL(19, 4) NOT NULL,
-    quantity SMALLINT NOT NULL,
-    discount DECIMAL(3, 2) DEFAULT 0.00,
-    profit DECIMAL(19, 4) NOT NULL,
     paymentMethod VARCHAR(20) NOT NULL,
+    trackingNumber VARCHAR(10) NOT NULL,
     status VARCHAR(10) NOT NULL DEFAULT 'active',
     FOREIGN KEY (customerID) REFERENCES customers(id),
     FOREIGN KEY (employeeID) REFERENCES employees(id),
-    FOREIGN KEY (productID) REFERENCES products(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- shipment modes
@@ -101,7 +96,7 @@ CREATE TABLE shippingDetails (
     postalCode VARCHAR(50) NOT NULL,
     region VARCHAR(50) NOT NULL,
     PRIMARY KEY (orderID),
-    FOREIGN KEY (shipModeId) REFERENCES shipmentModes(id),
+    FOREIGN KEY (shipmentModeId) REFERENCES shipmentModes(id),
     FOREIGN KEY (orderID) REFERENCES orders(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
