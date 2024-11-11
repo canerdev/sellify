@@ -100,6 +100,20 @@ CREATE TABLE shippingDetails (
     FOREIGN KEY (orderID) REFERENCES orders(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+DROP TABLE IF EXISTS orderDetails;
+CREATE TABLE orderDetails (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    orderID VARCHAR(14) NOT NULL,
+    productID VARCHAR(15) NOT NULL,
+    amount DECIMAL(19, 4) NOT NULL,
+    quantity INT NOT NULL,
+    discount DECIMAL(19, 4) NOT NULL,
+    profit DECIMAL(19, 4) NOT NULL,
+    FOREIGN KEY (orderID) REFERENCES orders(id),
+    FOREIGN KEY (productID) REFERENCES products(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 ALTER TABLE customers
 ADD CONSTRAINT fk_lastOrderID FOREIGN KEY (lastOrderID) REFERENCES orders(id);
 
