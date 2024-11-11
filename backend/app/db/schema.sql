@@ -55,9 +55,9 @@ CREATE TABLE customers (
     state VARCHAR(50) NOT NULL,
     postalCode INT NOT NULL,
     region VARCHAR(50) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE
+    email VARCHAR(100) NOT NULL UNIQUE,
     phone VARCHAR(20) NOT NULL,
-    lastOrderID VARCHAR(14),
+    lastOrderID VARCHAR(14)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- orders
@@ -71,7 +71,7 @@ CREATE TABLE orders (
     trackingNumber VARCHAR(10) NOT NULL,
     status VARCHAR(10) NOT NULL DEFAULT 'active',
     FOREIGN KEY (customerID) REFERENCES customers(id),
-    FOREIGN KEY (employeeID) REFERENCES employees(id),
+    FOREIGN KEY (employeeID) REFERENCES employees(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- shipment modes
@@ -80,7 +80,7 @@ CREATE TABLE shipmentModes (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
-    estimatedTime VARCHAR(100) NOT NULL
+    estimatedTime VARCHAR(100) NOT NULL,
     cost DECIMAL(19, 4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
