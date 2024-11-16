@@ -68,7 +68,7 @@ def loadProducts(cursor):
                     float(row['price']),
                     row['categoryID'],
                     row['stockCount'],
-                    row['lastSold']  # Use row['lastSold'] instead of df['lastSold']
+                    row['lastSold']
                 )
                 cursor.execute(insert_query, values)
             except ValueError as ve:
@@ -122,9 +122,6 @@ def loadEmployees(cursor):
 
 def loadCustomers(cursor):
     try:
-        # Drop the foreign key constraint temporarily
-        # cursor.execute("ALTER TABLE customers DROP FOREIGN KEY fk_lastOrderID")
-
         df = pd.read_csv("data/tables/customers.csv")
         for _, row in df.iterrows():
             insert_query = """
@@ -145,11 +142,7 @@ def loadCustomers(cursor):
                 row['lastOrderID']
             )
             cursor.execute(insert_query, values)
-        print(f"Successfully inserted customers table")
-        
-        # Add the foreign key constraint back after loading all data
-        print("Successfully restored foreign key constraint")
-        
+        print(f"Successfully inserted customers table")        
     except Exception as e:
         print(f"Error loading customers: {str(e)}")    
 
