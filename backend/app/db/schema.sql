@@ -1,17 +1,15 @@
-CREATE DATABASE IF NOT EXISTS sellify;
+DROP DATABASE IF EXISTS sellify;
+CREATE DATABASE sellify;
 USE sellify;
 
-
--- categories
 DROP TABLE IF EXISTS categories;
 CREATE TABLE categories (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
     description TEXT,
-    status BOOLEAN NOT NULL DEFAULT TRUE
+    status BOOLEAN NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- products
 DROP TABLE IF EXISTS products;
 CREATE TABLE products (
     id VARCHAR(15) NOT NULL PRIMARY KEY,
@@ -23,7 +21,6 @@ CREATE TABLE products (
     FOREIGN KEY (categoryID) REFERENCES categories(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- departments
 DROP TABLE IF EXISTS departments;
 CREATE TABLE departments (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -31,7 +28,6 @@ CREATE TABLE departments (
     employeeCount INT NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- employees
 DROP TABLE IF EXISTS employees;
 CREATE TABLE employees (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -44,7 +40,6 @@ CREATE TABLE employees (
     FOREIGN KEY (departmentID) REFERENCES departments(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- customers
 DROP TABLE IF EXISTS customers;
 CREATE TABLE customers (
     id VARCHAR(8) NOT NULL PRIMARY KEY,
@@ -57,10 +52,10 @@ CREATE TABLE customers (
     region VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     phone VARCHAR(20) NOT NULL,
-    lastOrderID VARCHAR(14)
+    lastOrderID VARCHAR(14),
+    CHECK (email LIKE '%_@%_.%')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- orders
 DROP TABLE IF EXISTS orders;
 CREATE TABLE orders (
     id VARCHAR(14) PRIMARY KEY,
@@ -74,21 +69,19 @@ CREATE TABLE orders (
     FOREIGN KEY (employeeID) REFERENCES employees(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- shipment modes
 DROP TABLE IF EXISTS shipmentModes;
 CREATE TABLE shipmentModes (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL UNIQUE,
     description TEXT,
     estimatedTime VARCHAR(100) NOT NULL,
-    cost DECIMAL(19, 4) NOT NULL
+    cost INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- shipping details
 DROP TABLE IF EXISTS shippingDetails;
 CREATE TABLE shippingDetails (
     orderID VARCHAR(14) NOT NULL,
-    shipmentModeId INT NOT NULL,
+    shipmentModeID INT NOT NULL,
     shippingDate DATE NOT NULL,
     country VARCHAR(50) NOT NULL,
     city VARCHAR(50) NOT NULL,
@@ -96,10 +89,9 @@ CREATE TABLE shippingDetails (
     postalCode VARCHAR(50) NOT NULL,
     region VARCHAR(50) NOT NULL,
     PRIMARY KEY (orderID),
-    FOREIGN KEY (shipmentModeId) REFERENCES shipmentModes(id),
+    FOREIGN KEY (shipmentModeID) REFERENCES shipmentModes(id),
     FOREIGN KEY (orderID) REFERENCES orders(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 
 DROP TABLE IF EXISTS orderDetails;
 CREATE TABLE orderDetails (
@@ -113,10 +105,3 @@ CREATE TABLE orderDetails (
     FOREIGN KEY (orderID) REFERENCES orders(id),
     FOREIGN KEY (productID) REFERENCES products(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-ALTER TABLE customers
-ADD CONSTRAINT fk_lastOrderID FOREIGN KEY (lastOrderID) REFERENCES orders(id);
-
-
-
-

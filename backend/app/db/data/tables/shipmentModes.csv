@@ -1,0 +1,5 @@
+name,description,estimatedTime,cost
+First Class,Strong packaging and fast shipping,3 days,15
+Second Class,Normal packaging and fast shipping,3 days,10
+Standard Class,Normal packaging and normal shipping,7 days,5
+Same Day,Same day shipping for urgent cargo,1 day,20
