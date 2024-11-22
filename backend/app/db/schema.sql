@@ -17,7 +17,7 @@ CREATE TABLE products (
     price DECIMAL(19, 4) NOT NULL,
     categoryID INT NOT NULL,
     stockCount INT NOT NULL,
-    lastSold DATE NOT NULL,
+    lastSold DATE,
     FOREIGN KEY (categoryID) REFERENCES categories(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
