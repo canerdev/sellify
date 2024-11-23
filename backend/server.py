@@ -241,27 +241,190 @@ def delete_customer(id):
 # ***************** CATEGORIES *****************
 
 # CREATE CATEGORY
+@app.route('/api/categories', methods=['POST'])
+def create_category():
+    data = request.json
+    query = 'INSERT INTO categories (name, description, status) VALUES (%s, %s, %s)'
+    values = (data['name'], data.get('description', None), data.get('status', 1))
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Category created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': f'Failed to create category: {str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ CATEGORIES
+@app.route('/api/categories', methods=['GET'])
+def get_categories():
+    query = 'SELECT * FROM categories'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to get categories'}), 500
+    finally:
+        connection.close()
 
 # READ CATEGORY BY ID
+@app.route('/api/categories/<int:id>', methods=['GET'])
+def get_category(id):
+    query = 'SELECT * FROM categories WHERE id = %s'
+    values = (id,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchone()
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({'error': 'Category not found'}), 404
+    except Exception as e:
+        return jsonify({'error': f'Failed to get category: {str(e)}'}), 500
+    finally:
+        connection.close()
 
 # UPDATE CATEGORY
+@app.route('/api/categories/<int:id>', methods=['PUT'])
+def update_category(id):
+    data = request.json
+    query = 'UPDATE categories SET name = %s, description = %s, status = %s WHERE id = %s'
+    values = (data['name'], data.get('description', None), data.get('status', 1), id)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Category updated successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to update category: {str(e)}'}), 500
+    finally:
+        connection.close()
 
 # DELETE CATEGORY
+@app.route('/api/categories/<int:id>', methods=['DELETE'])
+def delete_category(id):
+    query = 'DELETE FROM categories WHERE id = %s'
+    values = (id,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Category deleted successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to delete category: {str(e)}'}), 500
+    finally:
+        connection.close()
 
 
 # ***************** EMPLOYEES *****************
 
 # CREATE EMPLOYEE
+@app.route('/api/employees', methods=['POST'])
+def create_employee():
+    data = request.json
+    query = '''
+        INSERT INTO employees (name, gender, country, salary, age, departmentID) 
+        VALUES (%s, %s, %s, %s, %s, %s)
+    '''
+    values = (data['name'], data['gender'], data['country'], data['salary'], data['age'], data['departmentID'])
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Employee created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': f'Failed to create employee: {str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ EMPLOYEES
+@app.route('/api/employees', methods=['GET'])
+def get_employees():
+    query = 'SELECT * FROM employees'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to get employees'}), 500
+    finally:
+        connection.close()
 
 # READ EMPLOYEE BY ID
+@app.route('/api/employees/<int:id>', methods=['GET'])
+def get_employee(id):
+    query = 'SELECT * FROM employees WHERE id = %s'
+    values = (id,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchone()
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({'error': 'Employee not found'}), 404
+    except Exception as e:
+        return jsonify({'error': f'Failed to get employee: {str(e)}'}), 500
+    finally:
+        connection.close()
 
 # UPDATE EMPLOYEE
+@app.route('/api/employees/<int:id>', methods=['PUT'])
+def update_employee(id):
+    data = request.json
+    query = '''
+        UPDATE employees 
+        SET name = %s, gender = %s, country = %s, salary = %s, age = %s, departmentID = %s 
+        WHERE id = %s
+    '''
+    values = (data['name'], data['gender'], data['country'], data['salary'], data['age'], data['departmentID'], id)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Employee updated successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to update employee: {str(e)}'}), 500
+    finally:
+        connection.close()
 
 # DELETE EMPLOYEE
+@app.route('/api/employees/<int:id>', methods=['DELETE'])
+def delete_employee(id):
+    query = 'DELETE FROM employees WHERE id = %s'
+    values = (id,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Employee deleted successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to delete employee: {str(e)}'}), 500
+    finally:
+        connection.close()
 
 
 # ***************** SHIPMENT MODES *****************
