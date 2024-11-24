@@ -1,23 +1,40 @@
 import pandas as pd
-import mysql.connector
+import pymysql
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Added this to ensure environment variables are loaded
+
+db_config = {
+    'host': os.getenv('DB_HOST'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'database': os.getenv('DB_NAME')
+}
+
+def get_db_connection():
+    return pymysql.connect(
+        host=db_config['host'],
+        user=db_config['user'],
+        password=db_config['password'],
+        database=db_config['database'],
+        cursorclass=pymysql.cursors.DictCursor
+    )
 
 def createSchema(cursor):
     try:
         with open('schema.sql', 'r') as file:
             sql_file = file.read()
             
-            # remove any commented lines
             sql_commands = []
             for line in sql_file.splitlines():
-                # Skip comments and empty lines
                 if not line.startswith('--') and line.strip():
                     sql_commands.append(line)
             
             sql_file = ' '.join(sql_commands)
             sql_commands = sql_file.split(';')
             
-            # execute queries
             for command in sql_commands:
                 command = command.strip()
                 if command:
@@ -245,52 +262,60 @@ def loadOrderDetails(cursor):
 
 if __name__ == "__main__":
     try:
-        # connect to host and create schemas
-        cnx = mysql.connector.connect(
-            user='username',
-            password='password',
-            host='hostname'
+        cnx = pymysql.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            cursorclass=pymysql.cursors.DictCursor
         )
-        cursor = cnx.cursor()
-
-        # create schema
-        createSchema(cursor)
-        cnx.commit()
-
-        # close connections
-        cursor.close()
+        
+        with cnx.cursor() as cursor:
+            createSchema(cursor)
+            cnx.commit()
+        
         cnx.close()
 
-        # connect to the database
-        cnx = mysql.connector.connect(
-            user='username',
-            password='password',
-            host='hostname',
-            database='database_name'
+        cnx = pymysql.connect(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database'],
+            cursorclass=pymysql.cursors.DictCursor
         )
-        cursor = cnx.cursor()
+        
+        with cnx.cursor() as cursor:
+            loadCategories(cursor)
+            cnx.commit()
+            
+            loadDepartments(cursor)
+            cnx.commit()
+            
+            loadEmployees(cursor)
+            cnx.commit()
+            
+            loadProducts(cursor)
+            cnx.commit()
+            
+            loadCustomers(cursor)
+            cnx.commit()
+            
+            loadOrders(cursor)
+            cnx.commit()
+            
+            loadShipmentModes(cursor)
+            cnx.commit()
+            
+            loadShippingDetails(cursor)
+            cnx.commit()
+            
+            loadOrderDetails(cursor)
+            cnx.commit()
 
-        # Load data in the correct order (due to foreign key constraints)
-        loadCategories(cursor)
-        loadDepartments(cursor)
-        loadEmployees(cursor)
-        loadProducts(cursor)
-        loadCustomers(cursor)
-        loadOrders(cursor)
-        loadShipmentModes(cursor)
-        loadShippingDetails(cursor)
-        loadOrderDetails(cursor)
-
-        # Commit all changes at once
-        cnx.commit()
-
-    except mysql.connector.Error as err:
+    except pymysql.Error as err:
         print(f"Database Error: {err}")
     except Exception as e:
         print(f"Error: {str(e)}")
     finally:
-        if 'cursor' in locals():
-            cursor.close()
         if 'cnx' in locals():
             cnx.close()
-        print("Connection closed")
+            print("Connection closed")
