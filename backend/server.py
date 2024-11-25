@@ -215,27 +215,176 @@ def delete_customer(id):
 # ***************** ORDERS *****************
 
 # CREATE ORDER
+@app.route('/api/orders', methods=['POST'])
+def create_order():
+    data = request.json
+    query = 'INSERT INTO orders (id, customerID, employeeID, orderDate, paymentMethod, trackingNumber, status) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+    values = (data['id'], data['customerID'], data['employeeID'], data['orderDate'], data['paymentMethod'], data['trackingNumber'], data['status'])
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Order created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': f'Failed to create order{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ ORDERS
+@app.route('/api/orders', methods=['GET'])
+def get_orders():
+    query = 'SELECT * FROM orders'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get orders{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ ORDER BY ID
+@app.route('/api/orders/<string:id>', methods=['GET'])
+def get_order(id):
+    query = 'SELECT * FROM orders WHERE id = %s'
+    values = (id,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get order{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # UPDATE ORDER
+@app.route('/api/orders/<string:id>', methods=['PUT'])
+def update_order(id):
+    data = request.json
+    query = 'UPDATE orders SET customerID = %s, employeeID = %s, orderDate = %s, paymentMethod = %s, trackingNumber = %s, status = %s WHERE id = %s'
+    values = (data['customerID'], data['employeeID'], data['orderDate'], data['paymentMethod'], data['trackingNumber'], data['status'], id)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Order updated successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to update order{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # DELETE ORDER
+@app.route('/api/orders/<string:id>', methods=['DELETE'])
+def delete_order(id):
+    query = 'DELETE FROM orders WHERE id = %s'
+    values = (id,)
 
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Order deleted successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to delete order{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # ***************** DEPARTMENTS *****************
 
 # CREATE DEPARTMENT
+@app.route('/api/departments', methods=['POST'])
+def create_department():
+    data = request.json
+    query = 'INSERT INTO departments (name, employeeCount) VALUES (%s, %s)'
+    values = (data['name'], data['employeeCount'])
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Department created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': f'Failed to create department{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ DEPARTMENTS
+@app.route('/api/departments', methods=['GET'])
+def get_departments():
+    query = 'SELECT * FROM departments'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get departments{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ DEPARTMENT BY ID
+@app.route('/api/departments/<int:id>', methods=['GET'])
+def get_department(id):
+    query = 'SELECT * FROM departments WHERE id = %s'
+    values = (id,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get department{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # UPDATE DEPARTMENT
+@app.route('/api/departments/<int:id>', methods=['PUT'])
+def update_department(id):
+    data = request.json
+    query = 'UPDATE departments SET name = %s, employeeCount = %s WHERE id = %s'
+    values = (data['name'], data['employeeCount'], id)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Department updated successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to update department{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # DELETE DEPARTMENT
+@app.route('/api/departments/<int:id>', methods=['DELETE'])
+def delete_department(id):
+    query = 'DELETE FROM departments WHERE id = %s'
+    values = (id,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Department deleted successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to delete department{str(e)}'}), 500
+    finally:
+        connection.close()
 
 
 # ***************** CATEGORIES *****************
@@ -293,14 +442,93 @@ def delete_customer(id):
 # ***************** ORDER DETAILS *****************
 
 # CREATE ORDER DETAIL
+@app.route('/api/orderDetails', methods=['POST'])
+def create_order_detail():
+    data = request.json
+    query = 'INSERT INTO orderDetails (orderID, productID, amount, quantity, discount, profit) VALUES (%s, %s, %s, %s, %s, %s)'
+    values = (data['orderID'], data['productID'], data['amount'], data['quantity'], data['discount'], data['profit'])
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Order detail created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': f'Failed to create order detail{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ ORDER DETAILS
+@app.route('/api/orderDetails', methods=['GET'])
+def get_order_details():
+    query = 'SELECT * FROM orderDetails'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get order details{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ ORDER DETAIL BY ID
+@app.route('/api/orderDetails/<string:orderID>', methods=['GET'])
+def get_order_detail(orderID):
+    query = 'SELECT * FROM orderDetails WHERE orderID = %s'
+    values = (orderID,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get order detail{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # UPDATE ORDER DETAIL
+@app.route('/api/orderDetails/<string:orderID>', methods=['PUT'])
+def update_order_detail(orderID):
+    data = request.json
+    query = 'UPDATE orderDetails SET productID = %s, amount = %s, quantity = %s, discount = %s, profit = %s WHERE orderID = %s'
+    values = (data['productID'], data['amount'], data['quantity'], data['discount'], data['profit'], orderID)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Order detail updated successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to update order detail{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # DELETE ORDER DETAIL
+@app.route('/api/orderDetails/<string:orderID>', methods=['DELETE'])
+def delete_order_detail(orderID):
+    query = 'DELETE FROM orderDetails WHERE orderID = %s'
+    values = (orderID,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Order detail deleted successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to delete order detail{str(e)}'}), 500
+    finally:
+        connection.close()
+
+@app.route("/")
+def homepage():
+  return 'Hello World!'
 
 
 if __name__ == '__main__':
