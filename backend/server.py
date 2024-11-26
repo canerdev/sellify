@@ -578,28 +578,107 @@ def delete_employee(id):
 
 # ***************** SHIPMENT MODES *****************
 
-# CREATE SHIPMENT MODE
-
 # READ SHIPMENT MODES
-
-# READ SHIPMENT MODE BY ID
-
-# UPDATE SHIPMENT MODE
-
-# DELETE SHIPMENT MODE
-
+@app.route('/api/shipmentModes', methods=['GET'])
+def get_shipment_modes():
+    query = 'SELECT * FROM shipmentModes'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to get shipment modes'}), 500
+    finally:
+        connection.close()
 
 # ***************** SHIPPING DETAILS *****************
 
 # CREATE SHIPPING DETAIL
+@app.route('/api/shippingDetails', methods=['POST'])
+def create_shipping_detail():
+    data = request.json #orderID,shipmentModeID,shippingDate,country,city,state,postalCode,region
+    query = 'INSERT INTO shippingDetails (orderID, shipmentModeID, shippingDate, country, city, state, postalCode, region) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
+    values = (data['orderID'], data['shipmentModeID'], data['shippingDate'], data['country'], data['city'], data['state'], data['postalCode'], data['region'])
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Shipping detail created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': f'Failed to create shipping detail{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ SHIPPING DETAILS
+@app.route('/api/shippingDetails', methods=['GET'])
+def get_shipping_details():
+    query = 'SELECT * FROM shippingDetails'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get shipping details{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ SHIPPING DETAIL BY ID
+@app.route('/api/shippingDetails/<string:orderID>', methods=['GET'])
+def get_shipping_detail(orderID):
+    query = 'SELECT * FROM shippingDetails WHERE orderID = %s'
+    values = (orderID,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get shipping detail{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # UPDATE SHIPPING DETAIL
+@app.route('/api/shippingDetails/<string:orderID>', methods=['PUT'])
+def update_shipping_detail(orderID):
+    data = request.json
+    query = 'UPDATE shippingDetails SET shipmentModeID = %s, shippingDate = %s, country = %s, city = %s, state = %s, postalCode = %s, region = %s WHERE orderID = %s'
+    values = (data['shipmentModeID'], data['shippingDate'], data['country'], data['city'], data['state'], data['postalCode'], data['region'], orderID)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Shipping detail updated successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to update shipping detail{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # DELETE SHIPPING DETAIL
+@app.route('/api/shippingDetails/<string:orderID>', methods=['DELETE'])
+def delete_shipping_detail(orderID):
+    query = 'DELETE FROM shippingDetails WHERE orderID = %s'
+    values = (orderID,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Shipping detail deleted successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to delete shipping detail{str(e)}'}), 500
+    finally:
+        connection.close()
 
 
 # ***************** ORDER DETAILS *****************
