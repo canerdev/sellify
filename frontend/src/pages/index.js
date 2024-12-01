@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import { useState, useEffect } from "react";
+import Layout from "./layout/Layout";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -13,15 +14,11 @@ const geistMono = localFont({
 });
 
 export default function Home() {
-  const [message, setMessage] = useState("Loading...");
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:8080/api/home")
-      .then((res) => res.json())
-      .then((data) => {
-        setMessage(data.message);
-      });
-  }, []);
-
-  return <div>{message}</div>;
+  return (
+    <Layout>
+      <div className="flex flex-col items-center justify-center flex-1">
+        <h1 className="text-4xl font-geist-sans">Home</h1>
+      </div>
+    </Layout>
+  );
 }
