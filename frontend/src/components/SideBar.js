@@ -1,21 +1,25 @@
 import Link from "next/link";
 import Image from "next/image";
-import { FaUsers } from "react-icons/fa";
-import { FaHome } from "react-icons/fa";
-import { FaShoppingCart } from "react-icons/fa";
-import { FaListUl } from "react-icons/fa";
-import { FaBoxes } from "react-icons/fa";
-import { FaUsersCog } from "react-icons/fa";
-import { FaLayerGroup } from "react-icons/fa";
-import { FaShippingFast } from "react-icons/fa";
-import { FaPeopleCarry } from "react-icons/fa";
+import { 
+    FaUsers, 
+    FaHome, 
+    FaShoppingCart, 
+    FaListUl, 
+    FaBoxes, 
+    FaUsersCog, 
+    FaLayerGroup, 
+    FaShippingFast, 
+    FaPeopleCarry, 
+    FaSignOutAlt 
+} from "react-icons/fa";
+
 import { FaGear } from "react-icons/fa6";
-import { FaSignOutAlt } from "react-icons/fa";
+
 
 export default function SideBar() {
   return (
     <>
-      <div className="flex flex-col w-64 h-screen px-5 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
+      <div className="flex flex-col w-64 h-screen px-5 py-4 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
         <Link href="#">
           <Image
             className="w-auto h-24 rounded-md"
@@ -78,7 +82,7 @@ export default function SideBar() {
             >
               <FaUsersCog className="w-5 h-5" />
 
-              <span className="mx-2 text-sm font-medium">Users</span>
+              <span className="mx-2 text-sm font-medium">Employees</span>
             </Link>
 
             <Link
