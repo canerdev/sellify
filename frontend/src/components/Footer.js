@@ -3,11 +3,11 @@ import Image from "next/image";
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  
+
   return (
     <footer className="bg-gray-900 p-4 text-center text-white">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="flex items-center space-x-3">
+      <div className="flex flex-col items-center space-y-2">
+        <div className="flex items-center space-x-2">
           <Link href="#">
             <Image
               className="w-auto h-12 rounded-md"

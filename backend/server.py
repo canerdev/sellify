@@ -88,6 +88,26 @@ def get_product(id):
     finally:
         connection.close()
 
+
+# GET PRODUCT BY FILTER
+@app.route('/api/products/filter', methods=['GET'])
+def get_products_by_filter():
+    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    query = 'SELECT * FROM products LIMIT %s OFFSET %s'
+    values = (limit, offset)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get products: {str(e)}'}), 500
+    finally:
+        connection.close()
+
 # UPDATE PRODUCT
 @app.route('/api/products/<string:id>', methods=['PUT'])
 def update_product(id):
@@ -175,6 +195,26 @@ def get_customer(id):
         return jsonify({'error': f'Failed to get customer{str(e)}'}), 500
     finally:
         connection.close()
+
+# GET CUSTOMER BY FILTER
+@app.route('/api/customers/filter', methods=['GET'])
+def get_customers_by_filter():
+    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    query = 'SELECT * FROM customers LIMIT %s OFFSET %s'
+    values = (limit, offset)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get customers: {str(e)}'}), 500
+    finally:
+        connection.close()
+        
 
 # UPDATE CUSTOMER
 @app.route('/api/customers/<string:id>', methods=['PUT'])
@@ -264,6 +304,25 @@ def get_order(id):
     finally:
         connection.close()
 
+# GET ORDER BY FILTER
+@app.route('/api/orders/filter', methods=['GET'])
+def get_orders_by_filter():
+    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    query = 'SELECT * FROM orders LIMIT %s OFFSET %s'
+    values = (limit, offset)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get orders: {str(e)}'}), 500
+    finally:
+        connection.close()
+
 # UPDATE ORDER
 @app.route('/api/orders/<string:id>', methods=['PUT'])
 def update_order(id):
@@ -348,6 +407,26 @@ def get_department(id):
         return jsonify(result), 200
     except Exception as e:
         return jsonify({'error': f'Failed to get department{str(e)}'}), 500
+    finally:
+        connection.close()
+
+
+# GET DEPARTMENT BY FILTER
+@app.route('/api/departments/filter', methods=['GET'])
+def get_departments_by_filter():
+    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    query = 'SELECT * FROM departments LIMIT %s OFFSET %s'
+    values = (limit, offset)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get departments: {str(e)}'}), 500
     finally:
         connection.close()
 
@@ -439,6 +518,26 @@ def get_category(id):
             return jsonify({'error': 'Category not found'}), 404
     except Exception as e:
         return jsonify({'error': f'Failed to get category: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+
+# GET CATEGORY BY FILTER
+@app.route('/api/categories/filter', methods=['GET'])
+def get_categories_by_filter():
+    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    query = 'SELECT * FROM categories LIMIT %s OFFSET %s'
+    values = (limit, offset)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get categories: {str(e)}'}), 500
     finally:
         connection.close()
 
@@ -536,6 +635,26 @@ def get_employee(id):
     finally:
         connection.close()
 
+
+# GET EMPLOYEE BY FILTER
+@app.route('/api/employees/filter', methods=['GET'])
+def get_employees_by_filter():
+    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    query = 'SELECT * FROM employees LIMIT %s OFFSET %s'
+    values = (limit, offset)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get employees: {str(e)}'}), 500
+    finally:
+        connection.close()
+
 # UPDATE EMPLOYEE
 @app.route('/api/employees/<int:id>', methods=['PUT'])
 def update_employee(id):
@@ -579,7 +698,7 @@ def delete_employee(id):
 # ***************** SHIPMENT MODES *****************
 
 # READ SHIPMENT MODES
-@app.route('/api/shipmentModes', methods=['GET'])
+@app.route('/api/shipment-modes', methods=['GET'])
 def get_shipment_modes():
     query = 'SELECT * FROM shipmentModes'
     try:
@@ -593,10 +712,86 @@ def get_shipment_modes():
     finally:
         connection.close()
 
+# READ SHIPMENT MODE BY ID
+@app.route('/api/shipment-modes/<int:id>', methods=['GET'])
+def get_shipment_mode(id):
+    query = 'SELECT * FROM shipmentModes WHERE id = %s'
+    values = (id,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchone()
+        if result:
+            return jsonify(result), 200
+        else:
+            return jsonify({'error': 'Shipment mode not found'}), 404
+    except Exception as e:
+        return jsonify({'error': f'Failed to get shipment mode: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+# GET SHIPMENT MODE BY FILTER
+@app.route('/api/shipment-modes/filter', methods=['GET'])
+def get_shipment_modes_by_filter():
+    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    query = 'SELECT * FROM shipmentModes LIMIT %s OFFSET %s'
+    values = (limit, offset)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get shipment modes: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+
+# UPDATE SHIPMENT MODE
+@app.route('/api/shipment-modes/<int:id>', methods=['PUT'])
+def update_shipment_mode(id):
+    data = request.json
+    query = 'UPDATE shipmentModes SET name = %s, description = %s WHERE id = %s'
+    values = (data['name'], data['description'], id)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Shipment mode updated successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to update shipment mode: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+# DELETE SHIPMENT MODE
+@app.route('/api/shipment-modes/<int:id>', methods=['DELETE'])
+def delete_shipment_mode(id):
+    query = 'DELETE FROM shipmentModes WHERE id = %s'
+    values = (id,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Shipment mode deleted successfully!'}), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to delete shipment mode: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+
 # ***************** SHIPPING DETAILS *****************
 
 # CREATE SHIPPING DETAIL
-@app.route('/api/shippingDetails', methods=['POST'])
+@app.route('/api/shipping-details', methods=['POST'])
 def create_shipping_detail():
     data = request.json #orderID,shipmentModeID,shippingDate,country,city,state,postalCode,region
     query = 'INSERT INTO shippingDetails (orderID, shipmentModeID, shippingDate, country, city, state, postalCode, region) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)'
@@ -614,7 +809,7 @@ def create_shipping_detail():
         connection.close()
 
 # READ SHIPPING DETAILS
-@app.route('/api/shippingDetails', methods=['GET'])
+@app.route('/api/shipping-details', methods=['GET'])
 def get_shipping_details():
     query = 'SELECT * FROM shippingDetails'
     try:
@@ -629,7 +824,7 @@ def get_shipping_details():
         connection.close()
 
 # READ SHIPPING DETAIL BY ID
-@app.route('/api/shippingDetails/<string:orderID>', methods=['GET'])
+@app.route('/api/shipping-details/<string:orderID>', methods=['GET'])
 def get_shipping_detail(orderID):
     query = 'SELECT * FROM shippingDetails WHERE orderID = %s'
     values = (orderID,)
@@ -645,8 +840,27 @@ def get_shipping_detail(orderID):
     finally:
         connection.close()
 
+# GET SHIPPING DETAIL BY FILTER
+@app.route('/api/shipping-details/filter', methods=['GET'])
+def get_shipping_details_by_filter():
+    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    query = 'SELECT * FROM shippingDetails LIMIT %s OFFSET %s'
+    values = (limit, offset)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get shipping details: {str(e)}'}), 500
+    finally:
+        connection.close()
+
 # UPDATE SHIPPING DETAIL
-@app.route('/api/shippingDetails/<string:orderID>', methods=['PUT'])
+@app.route('/api/shipping-details/<string:orderID>', methods=['PUT'])
 def update_shipping_detail(orderID):
     data = request.json
     query = 'UPDATE shippingDetails SET shipmentModeID = %s, shippingDate = %s, country = %s, city = %s, state = %s, postalCode = %s, region = %s WHERE orderID = %s'
@@ -664,7 +878,7 @@ def update_shipping_detail(orderID):
         connection.close()
 
 # DELETE SHIPPING DETAIL
-@app.route('/api/shippingDetails/<string:orderID>', methods=['DELETE'])
+@app.route('/api/shipping-details/<string:orderID>', methods=['DELETE'])
 def delete_shipping_detail(orderID):
     query = 'DELETE FROM shippingDetails WHERE orderID = %s'
     values = (orderID,)
@@ -684,7 +898,7 @@ def delete_shipping_detail(orderID):
 # ***************** ORDER DETAILS *****************
 
 # CREATE ORDER DETAIL
-@app.route('/api/orderDetails', methods=['POST'])
+@app.route('/api/order-details', methods=['POST'])
 def create_order_detail():
     data = request.json
     query = 'INSERT INTO orderDetails (orderID, productID, amount, quantity, discount, profit) VALUES (%s, %s, %s, %s, %s, %s)'
@@ -702,7 +916,7 @@ def create_order_detail():
         connection.close()
 
 # READ ORDER DETAILS
-@app.route('/api/orderDetails', methods=['GET'])
+@app.route('/api/order-details', methods=['GET'])
 def get_order_details():
     query = 'SELECT * FROM orderDetails'
     try:
@@ -717,7 +931,7 @@ def get_order_details():
         connection.close()
 
 # READ ORDER DETAIL BY ID
-@app.route('/api/orderDetails/<string:orderID>', methods=['GET'])
+@app.route('/api/order-details/<string:orderID>', methods=['GET'])
 def get_order_detail(orderID):
     query = 'SELECT * FROM orderDetails WHERE orderID = %s'
     values = (orderID,)
@@ -733,8 +947,27 @@ def get_order_detail(orderID):
     finally:
         connection.close()
 
+# GET ORDER DETAIL BY FILTER
+@app.route('/api/order-details/filter', methods=['GET'])
+def get_order_details_by_filter():
+    offset = request.args.get('offset', default=0, type=int)
+    limit = request.args.get('limit', default=10, type=int)
+    query = 'SELECT * FROM orderDetails LIMIT %s OFFSET %s'
+    values = (limit, offset)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get order details: {str(e)}'}), 500
+    finally:
+        connection.close()
+
 # UPDATE ORDER DETAIL
-@app.route('/api/orderDetails/<string:orderID>', methods=['PUT'])
+@app.route('/api/order-details/<string:orderID>', methods=['PUT'])
 def update_order_detail(orderID):
     data = request.json
     query = 'UPDATE orderDetails SET productID = %s, amount = %s, quantity = %s, discount = %s, profit = %s WHERE orderID = %s'
@@ -752,7 +985,7 @@ def update_order_detail(orderID):
         connection.close()
 
 # DELETE ORDER DETAIL
-@app.route('/api/orderDetails/<string:orderID>', methods=['DELETE'])
+@app.route('/api/order-details/<string:orderID>', methods=['DELETE'])
 def delete_order_detail(orderID):
     query = 'DELETE FROM orderDetails WHERE orderID = %s'
     values = (orderID,)
