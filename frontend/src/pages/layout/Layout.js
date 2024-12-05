@@ -13,8 +13,8 @@ export default function Layout({ children }) {
       {/* Main Content Wrapper */}
       <div className="flex flex-col flex-1">
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-4">{children}</div>
+        <main className="flex-1 overflow-y-auto flex flex-col">
+          <div className="p-4 flex-grow">{children}</div>
 
           {/* Footer */}
           <Footer className="bg-gray-800 text-white" />
