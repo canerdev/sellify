@@ -3,6 +3,7 @@ from flask_cors import CORS
 import pymysql
 from dotenv import load_dotenv
 import os
+from datetime import datetime, timedelta
 
 
 load_dotenv()
@@ -1000,6 +1001,79 @@ def delete_order_detail(orderID):
         return jsonify({'error': f'Failed to delete order detail{str(e)}'}), 500
     finally:
         connection.close()
+
+# ***************** CUSTOM QUERIES FOR CHARTS *****************
+# GET TOTAL PROFIT BY PRODUCT CATEGORY IN THE LAST 30 DAYS
+@app.route('/api/total-profit-by-category', methods=['GET'])
+def get_total_profit_by_category():
+    end_date = datetime(2014, 12, 31) # should be updated to the current date
+    start_date = end_date - timedelta(days=30) 
+
+    query = """
+    SELECT 
+        categories.name,
+        SUM(profit) AS total_profit
+    FROM 
+        orders
+    JOIN 
+        orderdetails ON orders.id = orderdetails.orderid
+    JOIN 
+        products ON products.id = orderdetails.productid
+    JOIN 
+        categories ON categories.id = products.categoryID
+    WHERE 
+        orderDate BETWEEN %s AND %s
+    GROUP BY 
+        categories.name
+    ORDER BY 
+        total_profit DESC
+    """
+    
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch data: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+# GET TOTAL PROFIT BY DAY 
+@app.route('/api/total-profit-by-day', methods=['GET'])
+def get_total_profit_by_day():
+    end_date = datetime(2014, 12, 31)
+    start_date = end_date - timedelta(days=30) 
+
+    query = """
+    SELECT 
+        orderDate, 
+        SUM(profit) as total_profit
+    FROM 
+        orders
+    JOIN 
+        orderdetails ON orders.id = orderdetails.orderid
+    WHERE 
+        orderDate BETWEEN %s AND %s
+    GROUP BY 
+        orderDate
+    ORDER BY 
+        orderDate
+    """
+    
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch data: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+
 
 @app.route("/")
 def homepage():
