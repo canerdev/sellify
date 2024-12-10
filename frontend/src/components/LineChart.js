@@ -6,15 +6,15 @@ const LineChart = ({ data, xField, yField, caption }) => {
 
   useEffect(() => {
     const svg = d3.select(ref.current);
-    svg.selectAll("*").remove(); // Clear previous elements
+    svg.selectAll("*").remove();
 
-    const width = 500;
-    const height = 300;
+    const width = 550;
+    const height = 350;
     const margin = { top: 20, right: 30, bottom: 40, left: 40 };
 
     svg.attr("width", width).attr("height", height);
 
-    // Dynamically set the x and y scales
+    // dynamically set the x and y scales
     const x = d3
       .scaleBand()
       .domain(data.map((d) => d[xField]))
@@ -29,7 +29,6 @@ const LineChart = ({ data, xField, yField, caption }) => {
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    // Add tooltip
     const tooltip = d3
       .select("body")
       .append("div")
@@ -42,14 +41,12 @@ const LineChart = ({ data, xField, yField, caption }) => {
       .style("pointer-events", "none")
       .style("font-size", "12px");
 
-    // Create a line generator
     const line = d3
       .line()
       .x((d, i) => (i / (data.length - 1)) * (width - margin.left - margin.right) + margin.left)
       .y((d) => y(d[yField]))
       .curve(d3.curveMonotoneX);
 
-    // Draw the line
     svg
       .append("path")
       .data([data])
@@ -59,7 +56,7 @@ const LineChart = ({ data, xField, yField, caption }) => {
       .attr("stroke", "steelblue")
       .attr("stroke-width", 2);
 
-    // Add points to the line chart
+    // points
     svg
       .append("g")
       .selectAll("circle")
@@ -68,7 +65,7 @@ const LineChart = ({ data, xField, yField, caption }) => {
       .attr("cx", (d, i) => (i / (data.length - 1)) * (width - margin.left - margin.right) + margin.left)
       .attr("cy", (d) => y(d[yField]))
       .attr("r", 5)
-      .attr("fill", "red")
+      .attr("fill", "deepskyblue")
       .on("mouseover", (event, d) => {
         tooltip
           .style("opacity", 1)
@@ -85,7 +82,6 @@ const LineChart = ({ data, xField, yField, caption }) => {
         tooltip.style("opacity", 0);
       });
 
-    // Add x-axis as a single line
     svg
       .append("line")
       .attr("x1", margin.left)
@@ -94,18 +90,17 @@ const LineChart = ({ data, xField, yField, caption }) => {
       .attr("y2", height - margin.bottom)
       .attr("stroke", "white");
 
-    // Add y-axis
     svg
       .append("g")
       .call(d3.axisLeft(y))
-      .attr("transform", `translate(${margin.left},0)`);
+      .attr("transform", `translate(${margin.left},0)`)
+      .style("font-weight", "bold");
 
-    // Add caption with margin
     if (caption) {
       svg
         .append("text")
         .attr("x", width / 2)
-        .attr("y", margin.top) // Margin to control space between caption and chart
+        .attr("y", margin.top) 
         .attr("text-anchor", "middle")
         .attr("font-size", "18px")
         .attr("fill", "white")

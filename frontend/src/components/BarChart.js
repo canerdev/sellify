@@ -8,11 +8,13 @@ const BarChart = ({ data, xField, yField, caption}) => {
     const svg = d3.select(ref.current);
     svg.selectAll("*").remove();
 
-    const width = 500;
-    const height = 300;
+    const width = 550;
+    const height = 350;
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
 
     svg.attr("width", width).attr("height", height);
+    
+    const yMax = d3.max(data, (item) => item[yField]) * 1.25;
 
     const x = d3
       .scaleBand()
@@ -20,13 +22,12 @@ const BarChart = ({ data, xField, yField, caption}) => {
       .range([margin.left, width - margin.right])
       .padding(0.1);
 
-    const yMax = d3.max(data, (item) => item[yField]) * 1.25;
-
     const y = d3
       .scaleLinear()
       .domain([0, yMax])
       .nice()
       .range([height - margin.bottom, margin.top]);
+
 
     const tooltip = d3
       .select("body")
@@ -70,12 +71,15 @@ const BarChart = ({ data, xField, yField, caption}) => {
     svg
       .append("g")
       .call(d3.axisLeft(y))
-      .attr("transform", `translate(${margin.left},0)`);
+      .attr("transform", `translate(${margin.left},0)`)
+      .style("font-weight", "bold");
 
     svg
       .append("g")
       .call(d3.axisBottom(x))
-      .attr("transform", `translate(0,${height - margin.bottom})`);
+      .attr("transform", `translate(0,${height - margin.bottom})`)
+      .style("font-weight", "bold")
+      .style("font-size", "14px");
 
     if (caption) {
       svg
