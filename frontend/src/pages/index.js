@@ -3,7 +3,11 @@ import { useState, useEffect } from "react";
 import Layout from "./layout/Layout";
 import BarChart from "../components/BarChart";
 import LineChart from "../components/LineChart";
-import { getTotalProfitByCategory, getTotalProfitByDay } from "./api/orders";
+import {
+  getTotalProfitByCategory,
+  getTotalProfitByDay,
+  getBestSellerProducts,
+} from "./api/orders";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

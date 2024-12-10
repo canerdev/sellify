@@ -1074,6 +1074,42 @@ def get_total_profit_by_day():
         connection.close()
 
 
+# BEST SELLING PRODUCTS IN THE LAST 30 DAYS
+@app.route('/api/best-selling-products', methods=['GET'])
+def get_best_selling_products():
+    end_date = datetime(2014, 12, 31)
+    start_date = end_date - timedelta(days=30) 
+
+    query = """
+    SELECT 
+        products.name,
+        SUM(quantity) as total_quantity
+    FROM 
+        orders
+    JOIN 
+        orderDetails ON orders.id = orderDetails.orderid
+    JOIN 
+        products ON products.id = orderDetails.productid
+    WHERE 
+        orderDate BETWEEN %s AND %s
+    GROUP BY 
+        products.name
+    ORDER BY 
+        total_quantity DESC
+    """
+    
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch data: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+
 
 @app.route("/")
 def homepage():

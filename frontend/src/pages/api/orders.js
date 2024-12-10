@@ -24,11 +24,20 @@ export async function getTotalProfitByCategory() {
   return await res.json();
 }
 
-export async function getTotalProfitByDay () {
-    const res = await fetch("http://localhost:8080/api/total-profit-by-day");
-    if (!res.ok) {
-      throw new Error("Failed to fetch data from the server");
-    }
-    return await res.json();
+export async function getTotalProfitByDay() {
+  const res = await fetch("http://localhost:8080/api/total-profit-by-day");
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from the server");
   }
-  
+  return await res.json();
+}
+
+export async function getBestSellerProducts() {
+  const res = await fetch("http://localhost:8080/api/best-selling-products");
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from the server");
+  }
+
+  const data = await res.json();
+  return data.slice(0, 5);
+}
