@@ -60,7 +60,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="flex flex-col items-center justify-center flex-1 gap-4">
+      <div className="flex flex-col items-center justify-center flex-1 gap-4ges ">
         <div className="flex flex-row gap-4">
           <BarChart
             data={profitsByCategory}
