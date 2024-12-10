@@ -41,14 +41,14 @@ export default function IndexTable({
     <div className="max-w-screen-xl mx-auto px-4 md:px-8">
       <div className="items-start justify-between md:flex">
         <div className="max-w-lg">
-          <h2 className="text-gray-800 text-2xl font-bold mt-2">
+          <h2 className="text-gray-200 text-2xl font-bold mt-2">
             {description || "Index Table"}
           </h2>
         </div>
         <div className="mt-3 md:mt-0">
           <Link
             href="#"
-            className="inline-block px-4 py-2 text-white duration-150 font-medium bg-gray-600 rounded-lg hover:bg-gray-500 active:bg-gray-700 md:text-sm"
+            className="inline-block px-4 py-2 text-white duration-150 font-medium bg-gray-700 border rounded-lg hover:bg-gray-500 active:bg-gray-700 md:text-sm"
           >
             Add new
           </Link>
@@ -66,7 +66,7 @@ export default function IndexTable({
               <th className="py-3 px-2"></th>
             </tr>
           </thead>
-          <tbody className="text-gray-600 divide-y">
+          <tbody className="text-gray-200 divide-y">
             {items.map((item, idx) => (
               <tr key={idx}>
                 {columns.map((column, index) => (
@@ -122,7 +122,7 @@ export default function IndexTable({
           Previous
         </button>
 
-        <span className="text-sm font-medium text-gray-600">
+        <span className="text-sm font-medium text-gray-400">
           Page {currentPage} of {totalPages}
         </span>
 

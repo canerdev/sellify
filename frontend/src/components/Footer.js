@@ -5,7 +5,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 p-4 text-center text-white">
+    <footer className="bg-[#13243e] p-4 text-center text-white">
       <div className="flex flex-col items-center space-y-2">
         <div className="flex items-center space-x-2">
           <Link href="#">
@@ -17,12 +17,12 @@ export default function Footer() {
               alt="Sellify Logo"
             />
           </Link>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-400 text-sm">
             © {year} Sellify. All rights reserved.
           </p>
         </div>
 
-        <p className="text-gray-400">
+        <p className="text-gray-300">
           Made by <span className="text-yellow-500">🐝</span>
         </p>
       </div>
