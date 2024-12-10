@@ -27,7 +27,7 @@ export default function Orders() {
     fetchOrders();
   }, [offset, limit, currentPage]);
 
-  const headers = ["ID", "Customer", "Handler", "Date", "Status"];
+  const headers = ["ID", "Customer", "Handler ID", "Date", "Status"];
   const columns = ["id", "customerID", "employeeID", "orderDate", "status"];
 
   if (isLoading) {
