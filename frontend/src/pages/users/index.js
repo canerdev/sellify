@@ -1,7 +1,7 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import { getAllUsers, getUsersWithFilter } from "../api/users";
+import { getNumberOfUsers, getUsersWithFilter } from "../api/users";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
@@ -18,8 +18,8 @@ export default function Users() {
     async function fetchUsers() {
       setIsLoading(true);
       const users = await getUsersWithFilter(offset, limit);
-      const allUsers = await getAllUsers();
-      setCount(allUsers.length);
+      const usersCount = await getNumberOfUsers();
+      setCount(usersCount.count);
       setUsers(users);
       setIsLoading(false);
     }

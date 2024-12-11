@@ -2,7 +2,7 @@
 
 import Layout from "../layout/Layout";
 import {
-  getAllShippingDetails,
+  getNumberOfShippingDetails,
   getShippingDetailsWithFilter,
 } from "../api/shippingDetails";
 import IndexTable from "@/components/IndexTable";
@@ -23,8 +23,8 @@ export default function ShippingDetails() {
       const shippingDetails = await getShippingDetailsWithFilter(offset, limit);
       console.log(shippingDetails);
 
-      const allShippingDetails = await getAllShippingDetails();
-      setCount(allShippingDetails.length);
+      const countShippingDetails = await getNumberOfShippingDetails();
+      setCount(countShippingDetails.count);
       setShippingDetails(shippingDetails);
       setIsLoading(false);
     }

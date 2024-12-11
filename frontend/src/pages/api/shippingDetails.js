@@ -15,3 +15,11 @@ export async function getShippingDetailsWithFilter(offset, limit) {
   }
   return await res.json();
 }
+
+export async function getNumberOfShippingDetails() {
+  const res = await fetch("http://localhost:8080/api/shipping-details/count");
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from the server");
+  }
+  return await res.json();
+}

@@ -15,3 +15,11 @@ export async function getShipmentModesWithFilter(offset, limit) {
   }
   return await res.json();
 }
+
+export async function getNumberOfShipmentModes() {
+  const res = await fetch("http://localhost:8080/api/shipment-modes/count");
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from the server");
+  }
+  return await res.json();
+}

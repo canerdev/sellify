@@ -1,7 +1,7 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import { getAllOrders, getOrdersWithFilter } from "../api/orders";
+import { getNumberOfOrders, getOrdersWithFilter } from "../api/orders";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
@@ -18,8 +18,8 @@ export default function Orders() {
     async function fetchOrders() {
       setIsLoading(true);
       const orders = await getOrdersWithFilter(offset, limit);
-      const allOrders = await getAllOrders();
-      setCount(allOrders.length);
+      const ordersCount = await getNumberOfOrders();
+      setCount(ordersCount.count);
       setOrders(orders);
       setIsLoading(false);
     }

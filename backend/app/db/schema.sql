@@ -121,3 +121,10 @@ CREATE TABLE orderDetails (
         ON DELETE SET NULL
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ******************* TO BE FIXED *******************
+-- ALTER TABLE customers
+-- ADD CONSTRAINT fk_lastOrderID
+-- FOREIGN KEY (lastOrderID) REFERENCES orders(id)
+-- ON DELETE SET NULL
+-- ON UPDATE CASCADE;

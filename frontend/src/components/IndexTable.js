@@ -12,6 +12,7 @@ export default function IndexTable({
   setOffset,
   currentPage,
   setCurrentPage,
+  // onDelete,
 }) {
   const totalPages = Math.ceil(count / limit);
 
@@ -94,7 +95,10 @@ export default function IndexTable({
                       <FaEye className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => console.log("Delete", item.id)} // TODO: Implement delete functionality
+                      onClick={() => {
+                        // onDelete(item.id);
+                        console.log("Deleted: ", item.id);
+                      }} // TODO: Implement delete functionality
                       className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
                       aria-label="Delete"
                     >

@@ -144,6 +144,21 @@ def delete_product(id):
     finally:
         connection.close()
 
+# GET NUMBER OF PRODUCTS
+@app.route('/api/products/count', methods=['GET'])
+def get_products_count():
+    query = 'SELECT COUNT(*) as count FROM products'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get products count{str(e)}'}), 500
+    finally:
+        connection.close()
+
 
 # ***************** CUSTOMERS *****************
 
@@ -252,6 +267,22 @@ def delete_customer(id):
     finally:
         connection.close()
 
+# GET NUMBER OF CUSTOMERS
+@app.route('/api/customers/count', methods=['GET'])
+def get_customers_count():
+    query = 'SELECT COUNT(*) as count FROM customers'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get customers count{str(e)}'}), 500
+    finally:
+        connection.close()
+
+
 
 # ***************** ORDERS *****************
 
@@ -356,6 +387,21 @@ def delete_order(id):
         return jsonify({'message': 'Order deleted successfully!'}), 200
     except Exception as e:
         return jsonify({'error': f'Failed to delete order{str(e)}'}), 500
+    finally:
+        connection.close()
+
+# GET NUMBER OF ORDERS
+@app.route('/api/orders/count', methods=['GET'])
+def get_orders_count():
+    query = 'SELECT COUNT(*) as count FROM orders'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get orders count{str(e)}'}), 500
     finally:
         connection.close()
 
@@ -466,6 +512,20 @@ def delete_department(id):
     finally:
         connection.close()
 
+# GET NUMBER OF DEPARTMENTS
+@app.route('/api/departments/count', methods=['GET'])
+def get_departments_count():
+    query = 'SELECT COUNT(*) as count FROM departments'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get departments count{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # ***************** CATEGORIES *****************
 
@@ -574,6 +634,22 @@ def delete_category(id):
         return jsonify({'message': 'Category deleted successfully!'}), 200
     except Exception as e:
         return jsonify({'error': f'Failed to delete category: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+
+# GET NUMBER OF CATEGORIES
+@app.route('/api/categories/count', methods=['GET'])
+def get_categories_count():
+    query = 'SELECT COUNT(*) as count FROM categories'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to get categories count'}), 500
     finally:
         connection.close()
 
@@ -695,6 +771,21 @@ def delete_employee(id):
     finally:
         connection.close()
 
+# GET NUMBER OF EMPLOYEES
+@app.route('/api/employees/count', methods=['GET'])
+def get_employees_count():
+    query = 'SELECT COUNT(*) as count FROM employees'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to get employees count'}), 500
+    finally:
+        connection.close()
+
 
 # ***************** SHIPMENT MODES *****************
 
@@ -785,6 +876,21 @@ def delete_shipment_mode(id):
         return jsonify({'message': 'Shipment mode deleted successfully!'}), 200
     except Exception as e:
         return jsonify({'error': f'Failed to delete shipment mode: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+# GET NUMBER OF SHIPMENT MODES
+@app.route('/api/shipment-modes/count', methods=['GET'])
+def get_shipment_modes_count():
+    query = 'SELECT COUNT(*) as count FROM shipmentModes'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to get shipment modes count'}), 500
     finally:
         connection.close()
 
@@ -892,6 +998,21 @@ def delete_shipping_detail(orderID):
         return jsonify({'message': 'Shipping detail deleted successfully!'}), 200
     except Exception as e:
         return jsonify({'error': f'Failed to delete shipping detail{str(e)}'}), 500
+    finally:
+        connection.close()
+
+# GET SHIPPING DETAILS COUNT
+@app.route('/api/shipping-details/count', methods=['GET'])
+def get_shipping_details_count():
+    query = 'SELECT COUNT(*) as count FROM shippingDetails'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchone()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to get shipping details count'}), 500
     finally:
         connection.close()
 

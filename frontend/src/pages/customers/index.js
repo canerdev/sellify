@@ -1,7 +1,11 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import { getAllCustomers, getCustomersWithFilter } from "../api/customers";
+import {
+  getCustomersWithFilter,
+  getNumberOfCustomers,
+  // deleteCustomer,
+} from "../api/customers";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
@@ -13,13 +17,20 @@ export default function Customers() {
   const [count, setCount] = useState(0);
   const [customers, setCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  // const [deleted, setDeleted] = useState(false);
+
+  // async function handleDelete(id) {
+  //   await deleteCustomer(id);
+  //   console.log("Customer deleted with id: ", id);
+  //   setDeleted(true);
+  // }
 
   useEffect(() => {
     async function fetchCustomers() {
       setIsLoading(true);
       const customers = await getCustomersWithFilter(offset, limit);
-      const allCustomers = await getAllCustomers();
-      setCount(allCustomers.length);
+      const customersCount = await getNumberOfCustomers();
+      setCount(customersCount.count);
       setCustomers(customers);
       setIsLoading(false);
     }
@@ -50,6 +61,7 @@ export default function Customers() {
             setOffset={setOffset}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            // onDelete={handleDelete}
           />
         </div>
       </Layout>

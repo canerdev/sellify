@@ -1,7 +1,10 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import { getAllCategories, getCategoriesWithFilter } from "../api/categories";
+import {
+  getCategoriesWithFilter,
+  getNumberOfCategories,
+} from "../api/categories";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
@@ -18,8 +21,8 @@ export default function Categories() {
     async function fetchCategories() {
       setIsLoading(true);
       const categories = await getCategoriesWithFilter(offset, limit);
-      const allCategories = await getAllCategories();
-      setCount(allCategories.length);
+      const categoriesCount = await getNumberOfCategories();
+      setCount(categoriesCount.count);
       setCategories(categories);
       setIsLoading(false);
     }

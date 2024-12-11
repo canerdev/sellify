@@ -2,7 +2,7 @@
 
 import Layout from "../layout/Layout";
 import {
-  getAllDepartments,
+  getNumberOfDepartments,
   getDepartmentsWithFilter,
 } from "../api/departments";
 import IndexTable from "@/components/IndexTable";
@@ -21,8 +21,8 @@ export default function Departments() {
     async function fetchDepartments() {
       setIsLoading(true);
       const departments = await getDepartmentsWithFilter(offset, limit);
-      const allDepartments = await getAllDepartments();
-      setCount(allDepartments.length);
+      const departmentsCount = await getNumberOfDepartments();
+      setCount(departmentsCount.count);
       setDepartments(departments);
       setIsLoading(false);
     }

@@ -1,7 +1,7 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import { getAllProducts, getProductsByFilter } from "../api/products";
+import { getNumberOfProducts, getProductsByFilter } from "../api/products";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
@@ -18,8 +18,8 @@ export default function Products() {
     async function fetchProducts() {
       setIsLoading(true);
       const products = await getProductsByFilter(offset, limit);
-      const allProducts = await getAllProducts();
-      setCount(allProducts.length);
+      const productsCount = await getNumberOfProducts();
+      setCount(productsCount.count);
       setProducts(products);
       setIsLoading(false);
     }

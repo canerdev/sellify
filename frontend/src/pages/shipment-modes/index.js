@@ -2,7 +2,7 @@
 
 import Layout from "../layout/Layout";
 import {
-  getAllShipmentModes,
+  getNumberOfShipmentModes,
   getShipmentModesWithFilter,
 } from "../api/shipmentModes";
 import IndexTable from "@/components/IndexTable";
@@ -21,8 +21,8 @@ export default function ShipmentModes() {
     async function fetchShipmentModes() {
       setIsLoading(true);
       const shipmentModes = await getShipmentModesWithFilter(offset, limit);
-      const allShipmentModes = await getAllShipmentModes();
-      setCount(allShipmentModes.length);
+      const modesCount = await getNumberOfShipmentModes();
+      setCount(modesCount.count);
       setShipmentModes(shipmentModes);
       setIsLoading(false);
     }
