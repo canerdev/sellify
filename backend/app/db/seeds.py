@@ -4,7 +4,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # Added this to ensure environment variables are loaded
+load_dotenv()
 
 db_config = {
     'host': os.getenv('DB_HOST'),
@@ -310,6 +310,32 @@ if __name__ == "__main__":
             
             loadOrderDetails(cursor)
             cnx.commit()
+
+        
+            query = """
+            ALTER TABLE customers
+            DROP FOREIGN KEY fk_lastOrderID;
+            """
+            try:
+                with cnx.cursor() as cursor:
+                    cursor.execute(query)
+                    cnx.commit()
+            except pymysql.Error as err:
+                print(f"Error dropping fk_lastOrderID constraint: {err}")
+            
+            query = """
+            ALTER TABLE customers
+            ADD CONSTRAINT fk_lastOrderID
+            FOREIGN KEY (lastOrderID) REFERENCES orders(id)
+            ON DELETE SET NULL
+            ON UPDATE CASCADE;
+            """
+            try:
+                with cnx.cursor() as cursor:
+                    cursor.execute(query)
+                    cnx.commit()
+            except pymysql.Error as err:
+                print(f"Error executing fk_lastOrderID constraint: {err}")
 
     except pymysql.Error as err:
         print(f"Database Error: {err}")
