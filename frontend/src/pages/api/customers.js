@@ -34,3 +34,11 @@ export async function deleteCustomer(id) {
     throw new Error("Failed to delete the customer");
   }
 }
+
+export async function getCustomerDistributionByRegion() {
+  const res = await fetch("http://localhost:8080/api/customer-distribution-by-region");
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from the server");
+  }
+  return await res.json();
+}

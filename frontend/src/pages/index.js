@@ -3,11 +3,15 @@ import { useState, useEffect } from "react";
 import Layout from "./layout/Layout";
 import BarChart from "../components/BarChart";
 import LineChart from "../components/LineChart";
+import PieChart from "../components/PieChart";
 import {
   getTotalProfitByCategory,
   getTotalProfitByDay,
   getBestSellerProducts,
 } from "./api/orders";
+import{
+  getCustomerDistributionByRegion
+} from "./api/customers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,6 +27,7 @@ const geistMono = localFont({
 export default function Home() {
   const [profitsByCategory, setProfitsByCategory] = useState([]);
   const [profitsByDay, setProfitsByDay] = useState([]);
+  const [customerDistribution, setCustomerDistribution] = useState([]);
 
   useEffect(() => {
     async function fetchProfitsByCategory() {
@@ -58,8 +63,14 @@ export default function Home() {
       setProfitsByDay(data);
     }
 
+    async function fetchCustomerDistribution() {
+      const data = await getCustomerDistributionByRegion();
+      setCustomerDistribution(data);
+    }
+
     fetchProfitsByCategory();
     fetchProfitsByDay();
+    fetchCustomerDistribution();
   }, []);
 
   return (
@@ -77,6 +88,10 @@ export default function Home() {
             xField="orderDate"
             yField="total_profit"
             caption="Total Profit by Day (Last 30 Days)"
+          />
+          <PieChart
+            data={customerDistribution}
+            caption="Customer Distribution by Region"
           />
         </div>
       </div>

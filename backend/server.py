@@ -1231,6 +1231,32 @@ def get_best_selling_products():
         connection.close()
 
 
+# DISTRIBUTION OF CUSTOMERS BY REGION
+@app.route('/api/customer-distribution-by-region', methods=['GET'])
+def get_customer_distribution_by_region():
+    query = """
+    SELECT 
+        region,
+        COUNT(*) AS customer_count
+    FROM 
+        customers
+    GROUP BY 
+        region
+    ORDER BY 
+        customer_count DESC
+    """
+    
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch data: {str(e)}'}), 500
+    finally:
+        connection.close()
+
 
 @app.route("/")
 def homepage():
