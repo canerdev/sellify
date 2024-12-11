@@ -75,16 +75,22 @@ export default function Home() {
     }
     
     async function fetchCustomerDistribution() {
-      const data = await getCustomerDistributionByRegion();
+      const data = await getCustomerDistributionByRegion(); 
+      data.forEach((item) => {
+        item.region = String(item.region); 
+        item.customer_count = parseInt(item.customer_count); 
+      });
       setCustomerDistribution(data);
     }
-
+    
+    
     fetchProfitsByCategory();
     fetchProfitsByDay();
     fetchBestSellerProducts();
     fetchCustomerDistribution();
   }, []);
 
+  
   return (
     <Layout>
       <div className="flex justify-center items-center">
