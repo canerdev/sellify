@@ -1238,13 +1238,13 @@ def get_customer_distribution_by_region():
     query = """
     SELECT 
         region,
-        COUNT(*) AS customer_count
+        COUNT(*) AS count
     FROM 
         customers
     GROUP BY 
         region
     ORDER BY 
-        customer_count DESC
+        count DESC
     """
     
     try:
