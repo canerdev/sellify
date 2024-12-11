@@ -1217,6 +1217,7 @@ def get_best_selling_products():
         products.name
     ORDER BY 
         total_quantity DESC
+    LIMIT 10
     """
     
     try:
@@ -1229,7 +1230,6 @@ def get_best_selling_products():
         return jsonify({'error': f'Failed to fetch data: {str(e)}'}), 500
     finally:
         connection.close()
-
 
 
 @app.route("/")

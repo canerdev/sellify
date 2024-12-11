@@ -1,6 +1,7 @@
-import Link from "next/link";
+import { useState } from "react";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import NewRecordForm from "./NewRecordForm";
 
 export default function IndexTable({
   headers,
@@ -14,6 +15,7 @@ export default function IndexTable({
   setCurrentPage,
   // onDelete,
 }) {
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const totalPages = Math.ceil(count / limit);
 
   const handleNextPage = () => {
@@ -38,6 +40,11 @@ export default function IndexTable({
     }
   };
 
+  const handleAddRecord = (newRecord) => {
+    console.log("New Record Added:", newRecord);
+    // TODO: query to add new record
+  };
+
   return (
     <div className="max-w-screen-xl mx-auto px-4 md:px-8">
       <div className="items-start justify-between md:flex">
@@ -47,12 +54,12 @@ export default function IndexTable({
           </h2>
         </div>
         <div className="mt-3 md:mt-0">
-          <Link
-            href="#"
+          <button
+            onClick={() => setIsPopupOpen(true)}
             className="inline-block px-4 py-2 text-white duration-150 font-medium bg-gray-700 border rounded-lg hover:bg-gray-500 active:bg-gray-700 md:text-sm"
           >
             Add new
-          </Link>
+          </button>
         </div>
       </div>
       <div className="mt-12 shadow-sm border rounded-lg overflow-x-auto">
@@ -142,6 +149,13 @@ export default function IndexTable({
           Next
         </button>
       </div>
+
+      <NewRecordForm
+        isOpen={isPopupOpen}
+        onClose={() => setIsPopupOpen(false)}
+        onSubmit={handleAddRecord}
+        columns={headers}
+      />
     </div>
   );
 }

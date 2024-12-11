@@ -38,8 +38,34 @@ export default function Customers() {
     fetchCustomers();
   }, [offset, limit, currentPage]);
 
-  const headers = ["ID", "Name", "Email", "Phone"];
-  const columns = ["id", "name", "email", "phone"];
+  //   id,segment,name,country,city,state,postalCode,region,email,phone,lastOrderID
+
+  const headers = [
+    "ID",
+    "Segment",
+    "Name",
+    "Country",
+    "City",
+    "State",
+    "Postal Code",
+    "Region",
+    "Email",
+    "Phone",
+    "Last Order ID",
+  ];
+  const columns = [
+    "id",
+    "segment",
+    "name",
+    "country",
+    "city",
+    "state",
+    "postalCode",
+    "region",
+    "email",
+    "phone",
+    "lastOrderID",
+  ];
 
   if (isLoading) {
     return (
