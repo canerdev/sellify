@@ -23,6 +23,7 @@ const geistMono = localFont({
 export default function Home() {
   const [profitsByCategory, setProfitsByCategory] = useState([]);
   const [profitsByDay, setProfitsByDay] = useState([]);
+  const [bestSellerProducts, setBestSellerProducts] = useState([]);
 
   useEffect(() => {
     async function fetchProfitsByCategory() {
@@ -58,8 +59,19 @@ export default function Home() {
       setProfitsByDay(data);
     }
 
+    async function fetchBestSellerProducts() {
+      const data = await getBestSellerProducts();
+
+      data.forEach((item) => {
+        item.total_quantity = parseInt(item.total_quantity);
+      });
+
+      setBestSellerProducts(data);
+    }
+
     fetchProfitsByCategory();
     fetchProfitsByDay();
+    fetchBestSellerProducts();
   }, []);
 
   return (
@@ -77,6 +89,14 @@ export default function Home() {
             xField="orderDate"
             yField="total_profit"
             caption="Total Profit by Day (Last 30 Days)"
+          />
+          <BarChart
+            data={bestSellerProducts}
+            xField="name"
+            yField="total_quantity"
+            caption="Best Selling Products (Last 30 Days)"
+            className="col-span-2"
+            showXLabels={false}
           />
         </div>
       </div>

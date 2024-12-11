@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-const LineChart = ({ data, xField, yField, caption }) => {
+const LineChart = ({ data, xField, yField, caption, w, h }) => {
   const ref = useRef();
 
   useEffect(() => {
     const svg = d3.select(ref.current);
     svg.selectAll("*").remove();
 
-    const width = 550;
-    const height = 350;
+    const width = w || 550;
+    const height = h || 350;
     const margin = { top: 20, right: 30, bottom: 40, left: 40 };
 
     svg.attr("width", width).attr("height", height);

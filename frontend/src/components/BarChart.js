@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-const BarChart = ({ data, xField, yField, caption}) => {
+const BarChart = ({ data, xField, yField, caption, w, h, showXLabels = true }) => {
   const ref = useRef();
 
   useEffect(() => {
     const svg = d3.select(ref.current);
     svg.selectAll("*").remove();
 
-    const width = 550;
-    const height = 350;
+    const width = w || 550;
+    const height = h || 350;
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
 
     svg.attr("width", width).attr("height", height);
@@ -27,7 +27,6 @@ const BarChart = ({ data, xField, yField, caption}) => {
       .domain([0, yMax])
       .nice()
       .range([height - margin.bottom, margin.top]);
-
 
     const tooltip = d3
       .select("body")
@@ -55,7 +54,7 @@ const BarChart = ({ data, xField, yField, caption}) => {
       .on("mouseover", (event, d) => {
         tooltip
           .style("opacity", 1)
-          .html(`${d[yField]}`)
+          .html(`${xField}: ${d[xField]}<br>${yField}: ${d[yField]}`)
           .style("left", `${event.pageX + 10}px`)
           .style("top", `${event.pageY - 20}px`);
       })
@@ -74,12 +73,14 @@ const BarChart = ({ data, xField, yField, caption}) => {
       .attr("transform", `translate(${margin.left},0)`)
       .style("font-weight", "bold");
 
-    svg
-      .append("g")
-      .call(d3.axisBottom(x))
-      .attr("transform", `translate(0,${height - margin.bottom})`)
-      .style("font-weight", "bold")
-      .style("font-size", "14px");
+    if (showXLabels) {
+      svg
+        .append("g")
+        .call(d3.axisBottom(x))
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .style("font-weight", "bold")
+        .style("font-size", "14px");
+    }
 
     if (caption) {
       svg
@@ -91,7 +92,7 @@ const BarChart = ({ data, xField, yField, caption}) => {
         .attr("fill", "white")
         .text(caption);
     }
-  }, [data, xField, yField, caption]);
+  }, [data, xField, yField, caption, showXLabels]);
 
   return <svg className="border-2 border-white rounded-md" ref={ref}></svg>;
 };
