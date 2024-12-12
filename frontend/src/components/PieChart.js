@@ -13,13 +13,13 @@ const PieChart = ({ data, caption, w = 550, h = 350 }) => {
     const radius = Math.min(width, height) / 2 - 40;
 
     const color = d3.scaleOrdinal([
-      "#FF4500",
-      "#1E90FF",
-      "#32CD32",
-      "#8A2BE2",
-      "#FFD700",
-      "#DC143C",
-      "#00CED1"
+      "#1E3A8A",
+      "#2563EB",
+      "#60A5FA",
+      "#93C5FD",
+      "#F3F4F6",
+      "#6B7280",
+      "#111827"
     ]);
 
     const pie = d3.pie()
