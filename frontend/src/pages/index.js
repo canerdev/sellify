@@ -78,7 +78,7 @@ export default function Home() {
       const data = await getCustomerDistributionByRegion(); 
       data.forEach((item) => {
         item.region = String(item.region); 
-        item.customer_count = parseInt(item.customer_count); 
+        item.count = parseInt(item.count); 
       });
       setCustomerDistribution(data);
     }
@@ -118,6 +118,8 @@ export default function Home() {
           <PieChart
             data={customerDistribution}
             caption="Customer Distribution by Region"
+            valueField="count"
+            labelField="region"
           />
         </div>
       </div>
