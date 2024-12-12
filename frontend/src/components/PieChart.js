@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-const PieChart = ({ data, caption, w = 550, h = 350 }) => {
+const PieChart = ({ data, caption, valueField, labelField, w = 550, h = 350 }) => {
   const ref = useRef();
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const PieChart = ({ data, caption, w = 550, h = 350 }) => {
     ]);
 
     const pie = d3.pie()
-      .value((d) => d.count)
+      .value((d) => d[valueField])
       .sort(null);
 
     const arc = d3.arc()
@@ -68,7 +68,7 @@ const PieChart = ({ data, caption, w = 550, h = 350 }) => {
 
     arcs.append("path")
       .attr("d", arc)
-      .attr("fill", (d) => color(d.data.region))
+      .attr("fill", (d) => color(d.data[labelField]))
       .on("mouseover", function (event, d) {
         d3.select(this).transition()
           .duration(300)
@@ -76,7 +76,7 @@ const PieChart = ({ data, caption, w = 550, h = 350 }) => {
         tooltip.transition()
           .duration(300)
           .style("opacity", 1);
-        tooltip.html(`Region: ${d.data.region}<br>Customers: ${d.data.count}`)
+        tooltip.html(`${labelField}: ${d.data[labelField]}<br>${valueField}: ${d.data[valueField]}`)
           .style("left", (event.pageX + 10) + "px")
           .style("top", (event.pageY - 10) + "px");
       })
@@ -96,11 +96,11 @@ const PieChart = ({ data, caption, w = 550, h = 350 }) => {
     arcs.append("text")
       .attr("transform", (d) => `translate(${arc.centroid(d)})`)
       .attr("text-anchor", "middle")
-      .text((d) => d.data.region)
+      .text((d) => d.data[labelField])
       .style("fill", "white")
       .style("font-size", "12px");
 
-  }, [data, caption, w, h]);
+  }, [data, caption, valueField, labelField, w, h]);
 
   return <svg ref={ref} className="border-2 border-white rounded-md" style={{ backgroundColor: 'transparent', width: '100%', height: '100%' }}></svg>;
 };
