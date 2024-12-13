@@ -1238,11 +1238,13 @@ def get_customer_distribution_by_region():
     query = """
     SELECT 
         region,
-        COUNT(*) AS count
+        state,
+        COUNT(*) AS count,
+        SUM(COUNT(*)) OVER (PARTITION BY region) as totalCustomersInRegion
     FROM 
         customers
     GROUP BY 
-        region
+        region,state
     ORDER BY 
         count DESC
     """
