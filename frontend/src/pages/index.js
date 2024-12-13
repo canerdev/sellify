@@ -75,14 +75,20 @@ export default function Home() {
     }
     
     async function fetchCustomerDistribution() {
-      const data = await getCustomerDistributionByRegion(); 
-      data.forEach((item) => {
-        item.region = String(item.region); 
-        item.count = parseInt(item.count); 
-      });
-      setCustomerDistribution(data);
+      const data = await getCustomerDistributionByRegion();
+      const processedData = data.reduce((acc, item) => {
+        let region = acc.find(r => r.region === item.region);
+        if (!region) {
+          region = { region: item.region, totalCustomers: item.totalCustomersInRegion, states: [] };
+          acc.push(region);
+        }
+        region.states.push({ name: item.state, customerCount: item.count });
+        return acc;
+      }, []);
+
+      setCustomerDistribution(processedData);
     }
-    
+
     
     fetchProfitsByCategory();
     fetchProfitsByDay();
@@ -90,6 +96,14 @@ export default function Home() {
     fetchCustomerDistribution();
   }, []);
 
+  // tooltip of piechart for customer distribution by region 
+  function createTooltipContent(dataItem) {
+    let content = `<strong>${dataItem.region}:</strong><br>Total Customers: ${dataItem.totalCustomers}<br><br>States:<br>`;
+    dataItem.states.forEach(state => {
+      content += `<strong>${state.name}:</strong> ${state.customerCount}<br>`;
+    });
+    return content;
+  }
   
   return (
     <Layout>
@@ -118,8 +132,9 @@ export default function Home() {
           <PieChart
             data={customerDistribution}
             caption="Customer Distribution by Region"
-            valueField="count"
+            valueField="totalCustomers"
             labelField="region"
+            tooltipFunction= {createTooltipContent}
           />
         </div>
       </div>
