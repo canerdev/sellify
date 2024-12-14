@@ -24,6 +24,15 @@ export async function getNumberOfOrders() {
   return await res.json();
 }
 
+export async function deleteOrder(id) {
+  const res = await fetch(`http://localhost:8080/api/orders/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to delete the order");
+  }
+}
+
 export async function getTotalProfitByCategory() {
   const res = await fetch("http://localhost:8080/api/total-profit-by-category");
   if (!res.ok) {

@@ -4,6 +4,7 @@ import Layout from "../layout/Layout";
 import {
   getNumberOfShipmentModes,
   getShipmentModesWithFilter,
+  deleteShipmentMode,
 } from "../api/shipmentModes";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
@@ -16,6 +17,12 @@ export default function ShipmentModes() {
   const [count, setCount] = useState(0);
   const [shipmentModes, setShipmentModes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleted, setDeleted] = useState(false);
+
+  async function handleDelete(id) {
+    await deleteShipmentMode(id);
+    setDeleted(true);
+  }
 
   useEffect(() => {
     async function fetchShipmentModes() {
@@ -25,10 +32,11 @@ export default function ShipmentModes() {
       setCount(modesCount.count);
       setShipmentModes(shipmentModes);
       setIsLoading(false);
+      setDeleted(false);
     }
 
     fetchShipmentModes();
-  }, [offset, limit, currentPage]);
+  }, [offset, limit, currentPage, deleted]);
 
   const headers = ["ID", "Name", "Description", "Estimated Time", "Cost"];
   const columns = ["id", "name", "description", "estimatedTime", "cost"];
@@ -53,6 +61,7 @@ export default function ShipmentModes() {
             setOffset={setOffset}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            onDelete={handleDelete}
           />
         </div>
       </Layout>

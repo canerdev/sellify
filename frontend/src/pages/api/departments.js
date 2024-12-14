@@ -23,3 +23,12 @@ export async function getNumberOfDepartments() {
   }
   return await res.json();
 }
+
+export async function deleteDepartment(id) {
+  const res = await fetch(`http://localhost:8080/api/departments/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to delete the department");
+  }
+}

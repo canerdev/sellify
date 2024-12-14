@@ -25,8 +25,6 @@ export async function getNumberOfCustomers() {
 }
 
 export async function deleteCustomer(id) {
-  console.log("Deleting customer with id: ", id);
-
   const res = await fetch(`http://localhost:8080/api/customers/${id}`, {
     method: "DELETE",
   });
@@ -36,7 +34,9 @@ export async function deleteCustomer(id) {
 }
 
 export async function getCustomerDistributionByRegion() {
-  const res = await fetch("http://localhost:8080/api/customer-distribution-by-region");
+  const res = await fetch(
+    "http://localhost:8080/api/customer-distribution-by-region"
+  );
   if (!res.ok) {
     throw new Error("Failed to fetch data from the server");
   }

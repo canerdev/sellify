@@ -1,7 +1,11 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import { getNumberOfOrders, getOrdersWithFilter } from "../api/orders";
+import {
+  getNumberOfOrders,
+  getOrdersWithFilter,
+  deleteOrder,
+} from "../api/orders";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
@@ -13,6 +17,12 @@ export default function Orders() {
   const [count, setCount] = useState(0);
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleted, setDeleted] = useState(false);
+
+  async function handleDelete(id) {
+    await deleteOrder(id);
+    setDeleted(true);
+  }
 
   useEffect(() => {
     async function fetchOrders() {
@@ -22,10 +32,11 @@ export default function Orders() {
       setCount(ordersCount.count);
       setOrders(orders);
       setIsLoading(false);
+      setDeleted(false);
     }
 
     fetchOrders();
-  }, [offset, limit, currentPage]);
+  }, [offset, limit, currentPage, deleted]);
 
   const headers = ["ID", "Customer", "Handler ID", "Date", "Status"];
   const columns = ["id", "customerID", "employeeID", "orderDate", "status"];
@@ -50,6 +61,7 @@ export default function Orders() {
             setOffset={setOffset}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            onDelete={handleDelete}
           />
         </div>
       </Layout>

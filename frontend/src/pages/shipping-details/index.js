@@ -4,6 +4,7 @@ import Layout from "../layout/Layout";
 import {
   getNumberOfShippingDetails,
   getShippingDetailsWithFilter,
+  deleteShippingDetail,
 } from "../api/shippingDetails";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
@@ -16,21 +17,26 @@ export default function ShippingDetails() {
   const [count, setCount] = useState(0);
   const [shippingDetails, setShippingDetails] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleted, setDeleted] = useState(false);
+
+  async function handleDelete(id) {
+    await deleteShippingDetail(id);
+    setDeleted(true);
+  }
 
   useEffect(() => {
     async function fetchShippingDetails() {
       setIsLoading(true);
       const shippingDetails = await getShippingDetailsWithFilter(offset, limit);
-      console.log(shippingDetails);
-
       const countShippingDetails = await getNumberOfShippingDetails();
       setCount(countShippingDetails.count);
       setShippingDetails(shippingDetails);
       setIsLoading(false);
+      setDeleted(false);
     }
 
     fetchShippingDetails();
-  }, [offset, limit, currentPage]);
+  }, [offset, limit, currentPage, deleted]);
 
   const headers = [
     "Order ID",
@@ -67,6 +73,7 @@ export default function ShippingDetails() {
             setOffset={setOffset}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            onDelete={handleDelete}
           />
         </div>
       </Layout>

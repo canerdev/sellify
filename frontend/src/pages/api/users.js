@@ -23,3 +23,12 @@ export async function getNumberOfUsers() {
   }
   return await res.json();
 }
+
+export async function deleteUser(id) {
+  const res = await fetch(`http://localhost:8080/api/employees/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to delete the user");
+  }
+}

@@ -23,3 +23,12 @@ export async function getNumberOfShipmentModes() {
   }
   return await res.json();
 }
+
+export async function deleteShipmentMode(id) {
+  const res = await fetch(`http://localhost:8080/api/shipment-modes/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to delete the shipment mode");
+  }
+}

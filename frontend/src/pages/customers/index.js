@@ -4,7 +4,7 @@ import Layout from "../layout/Layout";
 import {
   getCustomersWithFilter,
   getNumberOfCustomers,
-  // deleteCustomer,
+  deleteCustomer,
 } from "../api/customers";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
@@ -17,13 +17,12 @@ export default function Customers() {
   const [count, setCount] = useState(0);
   const [customers, setCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [deleted, setDeleted] = useState(false);
+  const [deleted, setDeleted] = useState(false);
 
-  // async function handleDelete(id) {
-  //   await deleteCustomer(id);
-  //   console.log("Customer deleted with id: ", id);
-  //   setDeleted(true);
-  // }
+  async function handleDelete(id) {
+    await deleteCustomer(id);
+    setDeleted(true);
+  }
 
   useEffect(() => {
     async function fetchCustomers() {
@@ -33,39 +32,16 @@ export default function Customers() {
       setCount(customersCount.count);
       setCustomers(customers);
       setIsLoading(false);
+      setDeleted(false);
     }
 
     fetchCustomers();
-  }, [offset, limit, currentPage]);
+  }, [offset, limit, currentPage, deleted]);
 
   //   id,segment,name,country,city,state,postalCode,region,email,phone,lastOrderID
 
-  const headers = [
-    "ID",
-    "Segment",
-    "Name",
-    "Country",
-    "City",
-    "State",
-    "Postal Code",
-    "Region",
-    "Email",
-    "Phone",
-    "Last Order ID",
-  ];
-  const columns = [
-    "id",
-    "segment",
-    "name",
-    "country",
-    "city",
-    "state",
-    "postalCode",
-    "region",
-    "email",
-    "phone",
-    "lastOrderID",
-  ];
+  const headers = ["ID", "Name", "City", "Email", "Phone"];
+  const columns = ["id", "name", "city", "email", "phone"];
 
   if (isLoading) {
     return (
@@ -87,7 +63,7 @@ export default function Customers() {
             setOffset={setOffset}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            // onDelete={handleDelete}
+            onDelete={handleDelete}
           />
         </div>
       </Layout>

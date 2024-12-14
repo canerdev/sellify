@@ -4,6 +4,7 @@ import Layout from "../layout/Layout";
 import {
   getCategoriesWithFilter,
   getNumberOfCategories,
+  deleteCategory,
 } from "../api/categories";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
@@ -16,6 +17,12 @@ export default function Categories() {
   const [count, setCount] = useState(0);
   const [categories, setCategories] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleted, setDeleted] = useState(false);
+
+  async function handleDelete(id) {
+    await deleteCategory(id);
+    setDeleted(true);
+  }
 
   useEffect(() => {
     async function fetchCategories() {
@@ -25,10 +32,11 @@ export default function Categories() {
       setCount(categoriesCount.count);
       setCategories(categories);
       setIsLoading(false);
+      setDeleted(false);
     }
 
     fetchCategories();
-  }, [offset, limit, currentPage]);
+  }, [offset, limit, currentPage, deleted]);
 
   const headers = ["ID", "Name", "Description", "Status"];
   const columns = ["id", "name", "description", "status"];
@@ -53,6 +61,7 @@ export default function Categories() {
             setOffset={setOffset}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            onDelete={handleDelete}
           />
         </div>
       </Layout>

@@ -4,6 +4,7 @@ import Layout from "../layout/Layout";
 import {
   getNumberOfDepartments,
   getDepartmentsWithFilter,
+  deleteDepartment,
 } from "../api/departments";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
@@ -16,6 +17,12 @@ export default function Departments() {
   const [count, setCount] = useState(0);
   const [departments, setDepartments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleted, setDeleted] = useState(false);
+
+  async function handleDelete(id) {
+    await deleteDepartment(id);
+    setDeleted(true);
+  }
 
   useEffect(() => {
     async function fetchDepartments() {
@@ -25,10 +32,11 @@ export default function Departments() {
       setCount(departmentsCount.count);
       setDepartments(departments);
       setIsLoading(false);
+      setDeleted(false);
     }
 
     fetchDepartments();
-  }, [offset, limit, currentPage]);
+  }, [offset, limit, currentPage, deleted]);
 
   const headers = ["ID", "Name", "Employee Count"];
   const columns = ["id", "name", "employeeCount"];
@@ -53,6 +61,7 @@ export default function Departments() {
             setOffset={setOffset}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            onDelete={handleDelete}
           />
         </div>
       </Layout>

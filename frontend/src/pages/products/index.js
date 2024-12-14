@@ -1,7 +1,11 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import { getNumberOfProducts, getProductsByFilter } from "../api/products";
+import {
+  getNumberOfProducts,
+  getProductsByFilter,
+  deleteProduct,
+} from "../api/products";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
@@ -13,6 +17,12 @@ export default function Products() {
   const [count, setCount] = useState(0);
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleted, setDeleted] = useState(false);
+
+  async function handleDelete(id) {
+    await deleteProduct(id);
+    setDeleted(true);
+  }
 
   useEffect(() => {
     async function fetchProducts() {
@@ -22,10 +32,11 @@ export default function Products() {
       setCount(productsCount.count);
       setProducts(products);
       setIsLoading(false);
+      setDeleted(false);
     }
 
     fetchProducts();
-  }, [offset, limit, currentPage]);
+  }, [offset, limit, currentPage, deleted]);
 
   const headers = ["ID", "Name", "Price", "Category", "Stock"];
   const columns = ["id", "name", "price", "categoryID", "stockCount"];
@@ -50,6 +61,7 @@ export default function Products() {
             setOffset={setOffset}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            onDelete={handleDelete}
           />
         </div>
       </Layout>

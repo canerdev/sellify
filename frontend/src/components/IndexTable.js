@@ -13,7 +13,7 @@ export default function IndexTable({
   setOffset,
   currentPage,
   setCurrentPage,
-  // onDelete,
+  onDelete,
 }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const totalPages = Math.ceil(count / limit);
@@ -103,9 +103,10 @@ export default function IndexTable({
                     </button>
                     <button
                       onClick={() => {
-                        // onDelete(item.id);
-                        console.log("Deleted: ", item.id);
-                      }} // TODO: Implement delete functionality
+                        if (description == "Shipping Details Table")
+                          onDelete(item.orderID);
+                        onDelete(item.id);
+                      }}
                       className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
                       aria-label="Delete"
                     >
