@@ -58,3 +58,24 @@ export async function getBestSellerProducts() {
   const data = await res.json();
   return data.slice(0, 5);
 }
+
+export async function getOrderById(id) {
+  try {
+    const [orderResponse, detailsResponse] = await Promise.all([
+      fetch(`http://localhost:8080/api/orders/${id}`),
+      fetch(`http://localhost:8080/api/order-details/${id}`),
+    ]);
+
+    if (!orderResponse.ok || !detailsResponse.ok) {
+      throw new Error("Failed to fetch data from the server");
+    }
+
+    const order = await orderResponse.json();
+    const details = await detailsResponse.json();
+
+    return { ...order, details };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching order and order details");
+  }
+}

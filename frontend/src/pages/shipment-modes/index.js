@@ -8,6 +8,7 @@ import {
 } from "../api/shipmentModes";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function ShipmentModes() {
@@ -19,10 +20,16 @@ export default function ShipmentModes() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
 
+  const router = useRouter();
+
   async function handleDelete(id) {
     await deleteShipmentMode(id);
     setDeleted(true);
   }
+
+  const handleView = (id) => {
+    router.push(`/shipment-modes/${id}`);
+  };
 
   useEffect(() => {
     async function fetchShipmentModes() {
@@ -62,6 +69,7 @@ export default function ShipmentModes() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
+            onView={handleView}
           />
         </div>
       </Layout>

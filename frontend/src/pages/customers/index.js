@@ -8,6 +8,7 @@ import {
 } from "../api/customers";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Customers() {
@@ -19,10 +20,16 @@ export default function Customers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
 
+  const router = useRouter();
+
   async function handleDelete(id) {
     await deleteCustomer(id);
     setDeleted(true);
   }
+
+  const handleView = (id) => {
+    router.push(`/customers/${id}`);
+  };
 
   useEffect(() => {
     async function fetchCustomers() {
@@ -64,6 +71,7 @@ export default function Customers() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
+            onView={handleView}
           />
         </div>
       </Layout>

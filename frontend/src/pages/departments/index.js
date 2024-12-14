@@ -8,6 +8,7 @@ import {
 } from "../api/departments";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Departments() {
@@ -19,10 +20,16 @@ export default function Departments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
 
+  const router = useRouter();
+
   async function handleDelete(id) {
     await deleteDepartment(id);
     setDeleted(true);
   }
+
+  const handleView = (id) => {
+    router.push(`/departments/${id}`);
+  };
 
   useEffect(() => {
     async function fetchDepartments() {
@@ -62,6 +69,7 @@ export default function Departments() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
+            onView={handleView}
           />
         </div>
       </Layout>

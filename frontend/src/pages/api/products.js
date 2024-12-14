@@ -32,3 +32,11 @@ export async function deleteProduct(id) {
     throw new Error("Failed to delete the product");
   }
 }
+
+export async function getProductById(id) {
+  const res = await fetch(`http://localhost:8080/api/products/${id}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from the server");
+  }
+  return await res.json();
+}

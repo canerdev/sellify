@@ -14,6 +14,7 @@ export default function IndexTable({
   currentPage,
   setCurrentPage,
   onDelete,
+  onView,
 }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const totalPages = Math.ceil(count / limit);
@@ -95,7 +96,13 @@ export default function IndexTable({
                       <FaEdit className="w-5 h-5" />
                     </button>
                     <button
-                      onClick={() => console.log("View", item.id)} // TODO: Implement view functionality
+                      onClick={() => {
+                        if (description == "Shipping Details Table") {
+                          onView(item.orderID);
+                        } else {
+                          onView(item.id);
+                        }
+                      }}
                       className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
                       aria-label="View"
                     >
@@ -103,9 +110,11 @@ export default function IndexTable({
                     </button>
                     <button
                       onClick={() => {
-                        if (description == "Shipping Details Table")
+                        if (description == "Shipping Details Table") {
                           onDelete(item.orderID);
-                        onDelete(item.id);
+                        } else {
+                          onDelete(item.id);
+                        }
                       }}
                       className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
                       aria-label="Delete"

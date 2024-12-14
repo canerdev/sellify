@@ -8,6 +8,7 @@ import {
 } from "../api/categories";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Categories() {
@@ -19,10 +20,16 @@ export default function Categories() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
 
+  const router = useRouter();
+
   async function handleDelete(id) {
     await deleteCategory(id);
     setDeleted(true);
   }
+
+  const handleView = (id) => {
+    router.push(`/categories/${id}`);
+  };
 
   useEffect(() => {
     async function fetchCategories() {
@@ -62,6 +69,7 @@ export default function Categories() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
+            onView={handleView}
           />
         </div>
       </Layout>

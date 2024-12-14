@@ -32,3 +32,11 @@ export async function deleteDepartment(id) {
     throw new Error("Failed to delete the department");
   }
 }
+
+export async function getDepartmentById(id) {
+  const res = await fetch(`http://localhost:8080/api/departments/${id}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from the server");
+  }
+  return await res.json();
+}

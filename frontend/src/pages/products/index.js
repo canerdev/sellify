@@ -8,6 +8,7 @@ import {
 } from "../api/products";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Products() {
@@ -19,10 +20,16 @@ export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
 
+  const router = useRouter();
+
   async function handleDelete(id) {
     await deleteProduct(id);
     setDeleted(true);
   }
+
+  const handleView = (id) => {
+    router.push(`/products/${id}`);
+  };
 
   useEffect(() => {
     async function fetchProducts() {
@@ -62,6 +69,7 @@ export default function Products() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
+            onView={handleView}
           />
         </div>
       </Layout>

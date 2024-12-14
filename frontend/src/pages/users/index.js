@@ -4,6 +4,7 @@ import Layout from "../layout/Layout";
 import { getNumberOfUsers, getUsersWithFilter, deleteUser } from "../api/users";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Users() {
@@ -15,10 +16,16 @@ export default function Users() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
 
+  const router = useRouter();
+
   async function handleDelete(id) {
     await deleteUser(id);
     setDeleted(true);
   }
+
+  const handleView = (id) => {
+    router.push(`/users/${id}`);
+  };
 
   useEffect(() => {
     async function fetchUsers() {
@@ -58,6 +65,7 @@ export default function Users() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
+            onView={handleView}
           />
         </div>
       </Layout>

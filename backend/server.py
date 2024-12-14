@@ -1062,7 +1062,7 @@ def get_order_detail(orderID):
         connection = get_db_connection()
         with connection.cursor() as cursor:
             cursor.execute(query, values)
-            result = cursor.fetchone()
+            result = cursor.fetchall()
         return jsonify(result), 200
     except Exception as e:
         return jsonify({'error': f'Failed to get order detail{str(e)}'}), 500

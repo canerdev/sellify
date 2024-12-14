@@ -32,3 +32,11 @@ export async function deleteShippingDetail(id) {
     throw new Error("Failed to delete the shipping detail");
   }
 }
+
+export async function getShippingDetailById(id) {
+  const res = await fetch(`http://localhost:8080/api/shipping-details/${id}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from the server");
+  }
+  return await res.json();
+}

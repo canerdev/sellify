@@ -8,6 +8,7 @@ import {
 } from "../api/shippingDetails";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function ShippingDetails() {
@@ -19,10 +20,16 @@ export default function ShippingDetails() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
 
+  const router = useRouter();
+
   async function handleDelete(id) {
     await deleteShippingDetail(id);
     setDeleted(true);
   }
+
+  const handleView = (id) => {
+    router.push(`/shipping-details/${id}`);
+  };
 
   useEffect(() => {
     async function fetchShippingDetails() {
@@ -74,6 +81,7 @@ export default function ShippingDetails() {
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
+            onView={handleView}
           />
         </div>
       </Layout>
