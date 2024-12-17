@@ -66,6 +66,7 @@ export default function Users() {
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
+            tableName="employees"
           />
         </div>
       </Layout>

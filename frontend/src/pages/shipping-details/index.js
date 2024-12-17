@@ -82,6 +82,7 @@ export default function ShippingDetails() {
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
+            tableName="shippingDetails"
           />
         </div>
       </Layout>

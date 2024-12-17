@@ -1260,6 +1260,48 @@ def get_customer_distribution_by_region():
     finally:
         connection.close()
 
+# GET THE COLUMN INFORMATION OF A TABLE
+@app.route('/api/columns/<string:table_name>', methods=['GET'])
+def get_columns(table_name):    
+    query = """
+        SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE, EXTRA
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = %s
+        AND TABLE_NAME = %s;
+    """
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, (os.getenv('DB_NAME'), table_name))
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch data: {str(e)}'}), 500
+    finally:
+        connection.close()
+
+@app.route('/api/<table_name>', methods=['POST'])
+def create_record(table_name):
+    data = request.json
+    try:
+        columns = ", ".join(data.keys())
+        placeholders = ", ".join(["%s"] * len(data))
+        query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
+
+        values = tuple(data.values())
+
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+
+        return jsonify({'message': f'Record added to {table_name} successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        connection.close()
+
+
 
 @app.route("/")
 def homepage():

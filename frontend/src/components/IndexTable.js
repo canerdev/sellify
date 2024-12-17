@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import NewRecordForm from "./NewRecordForm";
+import { toast } from "react-toastify";
 
 export default function IndexTable({
   headers,
@@ -15,6 +16,7 @@ export default function IndexTable({
   setCurrentPage,
   onDelete,
   onView,
+  tableName,
 }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const totalPages = Math.ceil(count / limit);
@@ -41,9 +43,48 @@ export default function IndexTable({
     }
   };
 
-  const handleAddRecord = (newRecord) => {
-    console.log("New Record Added:", newRecord);
-    // TODO: query to add new record
+  const handleAddRecord = async (tableName, newRecord) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/${tableName}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newRecord), // Convert record data to JSON string
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error(
+          `Failed to add record to ${tableName}: ${
+            errorData.error || "Unknown error"
+          }`,
+          {
+            position: "bottom-right",
+            autoClose: 2000,
+          }
+        );
+        return;
+      }
+
+      toast.success(`The record has been successfully added to ${tableName}!`, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    } catch (error) {
+      console.error(`Error adding record to ${tableName}:`, error);
+      toast.error("An error occurred while adding the record.", {
+        position: "bottom-right",
+        autoClose: 2000,
+      });
+    }
   };
 
   return (
@@ -89,7 +130,7 @@ export default function IndexTable({
                 <td className="text-center px-6 whitespace-nowrap">
                   <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => console.log("Edit", item.id)} // TODO: Implement edit functionality
+                      onClick={() => console.log("Edit", item.id)}
                       className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
                       aria-label="Edit"
                     >
@@ -164,7 +205,7 @@ export default function IndexTable({
         isOpen={isPopupOpen}
         onClose={() => setIsPopupOpen(false)}
         onSubmit={handleAddRecord}
-        columns={headers}
+        tableName={tableName}
       />
     </div>
   );

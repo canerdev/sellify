@@ -70,6 +70,7 @@ export default function Categories() {
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
+            tableName="categories"
           />
         </div>
       </Layout>

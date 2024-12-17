@@ -70,6 +70,7 @@ export default function Departments() {
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
+            tableName="departments"
           />
         </div>
       </Layout>

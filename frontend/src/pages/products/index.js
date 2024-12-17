@@ -70,6 +70,7 @@ export default function Products() {
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
+            tableName="products"
           />
         </div>
       </Layout>

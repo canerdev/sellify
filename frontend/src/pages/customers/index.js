@@ -45,8 +45,6 @@ export default function Customers() {
     fetchCustomers();
   }, [offset, limit, currentPage, deleted]);
 
-  //   id,segment,name,country,city,state,postalCode,region,email,phone,lastOrderID
-
   const headers = ["ID", "Name", "City", "Email", "Phone"];
   const columns = ["id", "name", "city", "email", "phone"];
 
@@ -72,6 +70,7 @@ export default function Customers() {
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
+            tableName="customers"
           />
         </div>
       </Layout>

@@ -70,6 +70,7 @@ export default function ShipmentModes() {
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
+            tableName="shipmentModes"
           />
         </div>
       </Layout>

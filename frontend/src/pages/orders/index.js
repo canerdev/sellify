@@ -70,6 +70,7 @@ export default function Orders() {
             setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
+            tableName="orders"
           />
         </div>
       </Layout>
