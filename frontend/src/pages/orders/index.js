@@ -19,6 +19,7 @@ export default function Orders() {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const router = useRouter();
 
@@ -40,10 +41,11 @@ export default function Orders() {
       setOrders(orders);
       setIsLoading(false);
       setDeleted(false);
+      setAdded(false);
     }
 
     fetchOrders();
-  }, [offset, limit, currentPage, deleted]);
+  }, [offset, limit, currentPage, deleted, added]);
 
   const headers = ["ID", "Customer", "Handler ID", "Date", "Status"];
   const columns = ["id", "customerID", "employeeID", "orderDate", "status"];
@@ -71,6 +73,7 @@ export default function Orders() {
             onDelete={handleDelete}
             onView={handleView}
             tableName="orders"
+            setAdded={setAdded}
           />
         </div>
       </Layout>

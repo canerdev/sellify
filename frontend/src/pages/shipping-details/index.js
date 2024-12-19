@@ -19,6 +19,7 @@ export default function ShippingDetails() {
   const [shippingDetails, setShippingDetails] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const router = useRouter();
 
@@ -40,10 +41,11 @@ export default function ShippingDetails() {
       setShippingDetails(shippingDetails);
       setIsLoading(false);
       setDeleted(false);
+      setAdded(false);
     }
 
     fetchShippingDetails();
-  }, [offset, limit, currentPage, deleted]);
+  }, [offset, limit, currentPage, deleted, added]);
 
   const headers = [
     "Order ID",
@@ -83,6 +85,7 @@ export default function ShippingDetails() {
             onDelete={handleDelete}
             onView={handleView}
             tableName="shippingDetails"
+            setAdded={setAdded}
           />
         </div>
       </Layout>

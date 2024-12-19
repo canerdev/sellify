@@ -19,6 +19,7 @@ export default function Categories() {
   const [categories, setCategories] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const router = useRouter();
 
@@ -40,10 +41,11 @@ export default function Categories() {
       setCategories(categories);
       setIsLoading(false);
       setDeleted(false);
+      setAdded(false);
     }
 
     fetchCategories();
-  }, [offset, limit, currentPage, deleted]);
+  }, [offset, limit, currentPage, deleted, added]);
 
   const headers = ["ID", "Name", "Description", "Status"];
   const columns = ["id", "name", "description", "status"];
@@ -71,6 +73,7 @@ export default function Categories() {
             onDelete={handleDelete}
             onView={handleView}
             tableName="categories"
+            setAdded={setAdded}
           />
         </div>
       </Layout>

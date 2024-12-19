@@ -19,6 +19,7 @@ export default function ShipmentModes() {
   const [shipmentModes, setShipmentModes] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const router = useRouter();
 
@@ -40,10 +41,11 @@ export default function ShipmentModes() {
       setShipmentModes(shipmentModes);
       setIsLoading(false);
       setDeleted(false);
+      setAdded(false);
     }
 
     fetchShipmentModes();
-  }, [offset, limit, currentPage, deleted]);
+  }, [offset, limit, currentPage, deleted, added]);
 
   const headers = ["ID", "Name", "Description", "Estimated Time", "Cost"];
   const columns = ["id", "name", "description", "estimatedTime", "cost"];
@@ -71,6 +73,7 @@ export default function ShipmentModes() {
             onDelete={handleDelete}
             onView={handleView}
             tableName="shipmentModes"
+            setAdded={setAdded}
           />
         </div>
       </Layout>

@@ -19,6 +19,7 @@ export default function Departments() {
   const [departments, setDepartments] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const router = useRouter();
 
@@ -40,10 +41,11 @@ export default function Departments() {
       setDepartments(departments);
       setIsLoading(false);
       setDeleted(false);
+      setAdded(false);
     }
 
     fetchDepartments();
-  }, [offset, limit, currentPage, deleted]);
+  }, [offset, limit, currentPage, deleted, added]);
 
   const headers = ["ID", "Name", "Employee Count"];
   const columns = ["id", "name", "employeeCount"];
@@ -71,6 +73,7 @@ export default function Departments() {
             onDelete={handleDelete}
             onView={handleView}
             tableName="departments"
+            setAdded={setAdded}
           />
         </div>
       </Layout>

@@ -19,6 +19,7 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const router = useRouter();
 
@@ -40,10 +41,11 @@ export default function Products() {
       setProducts(products);
       setIsLoading(false);
       setDeleted(false);
+      setAdded(false);
     }
 
     fetchProducts();
-  }, [offset, limit, currentPage, deleted]);
+  }, [offset, limit, currentPage, deleted, added]);
 
   const headers = ["ID", "Name", "Price", "Category", "Stock"];
   const columns = ["id", "name", "price", "categoryID", "stockCount"];
@@ -71,6 +73,7 @@ export default function Products() {
             onDelete={handleDelete}
             onView={handleView}
             tableName="products"
+            setAdded={setAdded}
           />
         </div>
       </Layout>

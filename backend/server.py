@@ -166,8 +166,9 @@ def get_products_count():
 @app.route('/api/customers', methods=['POST'])
 def create_customer():
     data = request.json
+    last_order_id = data.get('lastOrderID', None)
     query = 'INSERT INTO customers (id, segment, name, country, city, state, postalCode, region, email, phone, lastOrderID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
-    values = (data['id'], data['segment'], data['name'], data['country'], data['city'], data['state'], data['postalCode'], data['region'], data['email'], data['phone'], data['lastOrderID'])
+    values = (data['id'], data['segment'], data['name'], data['country'], data['city'], data['state'], data['postalCode'], data['region'], data['email'], data['phone'], last_order_id)
 
     try:
         connection = get_db_connection()

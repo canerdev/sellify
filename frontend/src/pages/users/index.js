@@ -15,6 +15,7 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const router = useRouter();
 
@@ -36,10 +37,11 @@ export default function Users() {
       setUsers(users);
       setIsLoading(false);
       setDeleted(false);
+      setAdded(false);
     }
 
     fetchUsers();
-  }, [offset, limit, currentPage, deleted]);
+  }, [offset, limit, currentPage, deleted, added]);
 
   const headers = ["ID", "Name", "Department"];
   const columns = ["id", "name", "departmentID"];
@@ -67,6 +69,7 @@ export default function Users() {
             onDelete={handleDelete}
             onView={handleView}
             tableName="employees"
+            setAdded={setAdded}
           />
         </div>
       </Layout>

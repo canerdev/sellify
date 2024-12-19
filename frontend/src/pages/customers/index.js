@@ -19,6 +19,7 @@ export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
+  const [added, setAdded] = useState(false);
 
   const router = useRouter();
 
@@ -40,10 +41,11 @@ export default function Customers() {
       setCustomers(customers);
       setIsLoading(false);
       setDeleted(false);
+      setAdded(false);
     }
 
     fetchCustomers();
-  }, [offset, limit, currentPage, deleted]);
+  }, [offset, limit, currentPage, deleted, added]);
 
   const headers = ["ID", "Name", "City", "Email", "Phone"];
   const columns = ["id", "name", "city", "email", "phone"];
@@ -71,6 +73,7 @@ export default function Customers() {
             onDelete={handleDelete}
             onView={handleView}
             tableName="customers"
+            setAdded={setAdded}
           />
         </div>
       </Layout>

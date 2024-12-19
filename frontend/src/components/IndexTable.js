@@ -17,6 +17,7 @@ export default function IndexTable({
   onDelete,
   onView,
   tableName,
+  setAdded,
 }) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const totalPages = Math.ceil(count / limit);
@@ -67,6 +68,7 @@ export default function IndexTable({
         return;
       }
 
+      setAdded(true);
       toast.success(`The record has been successfully added to ${tableName}!`, {
         position: "bottom-right",
         autoClose: 2000,

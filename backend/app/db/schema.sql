@@ -56,7 +56,7 @@ CREATE TABLE customers (
     region VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     phone VARCHAR(20) NOT NULL,
-    lastOrderID VARCHAR(14),
+    lastOrderID VARCHAR(14) DEFAULT NULL,
     CHECK (email LIKE '%_@%_.%')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
