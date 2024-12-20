@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export async function getAllUsers() {
   const res = await fetch("http://localhost:8080/api/employees");
   if (!res.ok) {
@@ -25,11 +27,28 @@ export async function getNumberOfUsers() {
 }
 
 export async function deleteUser(id) {
-  const res = await fetch(`http://localhost:8080/api/employees/${id}`, {
-    method: "DELETE",
-  });
-  if (!res.ok) {
-    throw new Error("Failed to delete the user");
+  try {
+    const res = await fetch(`http://localhost:8080/api/employees/${id}`, {
+      method: "DELETE",
+    });
+    if (res.ok) {
+      toast.success("User deleted successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to delete user: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
   }
 }
 

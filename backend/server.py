@@ -377,13 +377,31 @@ def update_order(id):
 # DELETE ORDER
 @app.route('/api/orders/<string:id>', methods=['DELETE'])
 def delete_order(id):
-    query = 'DELETE FROM orders WHERE id = %s'
+    get_customer_query = 'SELECT customerID FROM orders WHERE id = %s'
+    delete_order_query = 'DELETE FROM orders WHERE id = %s'
+    get_latest_order_query = 'SELECT id FROM orders WHERE customerID = %s ORDER BY orderDate DESC LIMIT 1'
+    update_customer_query = 'UPDATE customers SET lastOrderID = %s WHERE id = %s'
+
     values = (id,)
 
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            cursor.execute(query, values)
+            cursor.execute(get_customer_query, values)
+            customer = cursor.fetchone()
+            if customer is None:
+                return jsonify({'error': 'Order not found'}), 404
+            
+            customer_id = customer['customerID']
+            cursor.execute(delete_order_query, values)
+            cursor.execute(get_latest_order_query, (customer_id,))
+            latest_order = cursor.fetchone()
+
+            if latest_order is None:
+                cursor.execute(update_customer_query, (None, customer_id))
+            else:
+                cursor.execute(update_customer_query, (latest_order['id'], customer_id))
+
             connection.commit()
         return jsonify({'message': 'Order deleted successfully!'}), 200
     except Exception as e:
@@ -758,13 +776,23 @@ def update_employee(id):
 # DELETE EMPLOYEE
 @app.route('/api/employees/<int:id>', methods=['DELETE'])
 def delete_employee(id):
-    query = 'DELETE FROM employees WHERE id = %s'
+    get_department_query = 'SELECT departmentID FROM employees WHERE id = %s'
+    delete_emp_query = 'DELETE FROM employees WHERE id = %s'
+    update_department_query = 'UPDATE departments SET employeeCount = employeeCount - 1 WHERE id = %s'
+
     values = (id,)
 
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            cursor.execute(query, values)
+            cursor.execute(get_department_query, values)
+            deparment_id = cursor.fetchone()
+            
+            if deparment_id is None:
+                return jsonify({'error': 'Employee not found'}), 404
+            
+            cursor.execute(delete_emp_query, values)
+            cursor.execute(update_department_query, deparment_id['departmentID'])
             connection.commit()
         return jsonify({'message': 'Employee deleted successfully!'}), 200
     except Exception as e:

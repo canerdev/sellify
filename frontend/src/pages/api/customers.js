@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export async function getAllCustomers() {
   const res = await fetch("http://localhost:8080/api/customers");
   if (!res.ok) {
@@ -25,11 +27,29 @@ export async function getNumberOfCustomers() {
 }
 
 export async function deleteCustomer(id) {
-  const res = await fetch(`http://localhost:8080/api/customers/${id}`, {
-    method: "DELETE",
-  });
-  if (!res.ok) {
-    throw new Error("Failed to delete the customer");
+  try {
+    const res = await fetch(`http://localhost:8080/api/customers/${id}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      toast.success("Customer deleted successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to delete customer: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
   }
 }
 

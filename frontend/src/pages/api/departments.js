@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export async function getAllDepartments() {
   const res = await fetch("http://localhost:8080/api/departments");
   if (!res.ok) {
@@ -25,11 +27,28 @@ export async function getNumberOfDepartments() {
 }
 
 export async function deleteDepartment(id) {
-  const res = await fetch(`http://localhost:8080/api/departments/${id}`, {
-    method: "DELETE",
-  });
-  if (!res.ok) {
-    throw new Error("Failed to delete the department");
+  try {
+    const res = await fetch(`http://localhost:8080/api/departments/${id}`, {
+      method: "DELETE",
+    });
+    if (res.ok) {
+      toast.success("Department deleted successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to delete department: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
   }
 }
 
