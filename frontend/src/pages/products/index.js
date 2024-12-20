@@ -1,15 +1,12 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import {
-  getNumberOfProducts,
-  getProductsByFilter,
-  deleteProduct,
-} from "../api/products";
+import { getNumberOfProducts, getProductsByFilter, deleteProduct } from "../api/products";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
+import { Button } from "@/components/ui/button"; // Assuming you're using shadcn/ui
 
 export default function Products() {
   const [offset, setOffset] = useState(0);
@@ -20,7 +17,6 @@ export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
-
   const router = useRouter();
 
   async function handleDelete(id) {
@@ -30,6 +26,10 @@ export default function Products() {
 
   const handleView = (id) => {
     router.push(`/products/${id}`);
+  };
+
+  const handleLowStockClick = () => {
+    router.push('/low-stock');
   };
 
   useEffect(() => {
@@ -43,7 +43,6 @@ export default function Products() {
       setDeleted(false);
       setAdded(false);
     }
-
     fetchProducts();
   }, [offset, limit, currentPage, deleted, added]);
 
@@ -51,29 +50,48 @@ export default function Products() {
   const columns = ["id", "name", "price", "categoryID", "stockCount"];
 
   if (isLoading) {
-    return (
-      <Layout>
-        <Loading />
-      </Layout>
-    );
+    return <Loading />;
   } else {
     return (
       <Layout>
-        <div>
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold">Products</h1>
+            <div className="space-x-4">
+              <Button
+                variant="outline"
+                onClick={handleLowStockClick}
+                className="flex items-center gap-2"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M3 3v18h18" />
+                  <path d="m19 9-5 5-4-4-3 3" />
+                </svg>
+                View Low Stock
+              </Button>
+            </div>
+          </div>
           <IndexTable
             headers={headers}
-            items={products}
             columns={columns}
-            count={count}
-            description={"Products Table"}
-            limit={limit}
-            setOffset={setOffset}
+            data={products}
+            handleDelete={handleDelete}
+            handleView={handleView}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            onDelete={handleDelete}
-            onView={handleView}
-            tableName="products"
-            setAdded={setAdded}
+            setOffset={setOffset}
+            limit={limit}
+            count={count}
           />
         </div>
       </Layout>
