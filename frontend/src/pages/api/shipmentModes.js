@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export async function getAllShipmentModes() {
   const res = await fetch("http://localhost:8080/api/shipment-modes");
   if (!res.ok) {
@@ -25,11 +27,29 @@ export async function getNumberOfShipmentModes() {
 }
 
 export async function deleteShipmentMode(id) {
-  const res = await fetch(`http://localhost:8080/api/shipment-modes/${id}`, {
-    method: "DELETE",
-  });
-  if (!res.ok) {
-    throw new Error("Failed to delete the shipment mode");
+  try {
+    const res = await fetch(`http://localhost:8080/api/shipment-modes/${id}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      toast.success("Shipment mode deleted successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to delete shipment mode: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
   }
 }
 
