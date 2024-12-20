@@ -1261,6 +1261,25 @@ def get_customer_distribution_by_region():
     finally:
         connection.close()
 
+# GET PRODUCTS WITH LOW STOCK
+@app.route('/api/low-stock/<lower_than>', methods=['GET'])
+def get_low_stock_products(lower_than):
+    query = """
+    SELECT * FROM products
+    WHERE products.stockCount < %s
+    """
+    
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, (lower_than,))
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to fetch data: {str(e)}'}), 500
+    finally:
+        connection.close()
+
 # GET THE COLUMN INFORMATION OF A TABLE
 @app.route('/api/columns/<string:table_name>', methods=['GET'])
 def get_columns(table_name):    
