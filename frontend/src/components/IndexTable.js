@@ -126,7 +126,7 @@ export default function IndexTable({
                     key={index}
                     className="px-2 text-center py-4 whitespace-nowrap"
                   >
-                    {item[column]}
+                    {item[column] || "-"}
                   </td>
                 ))}
                 <td className="text-center px-6 whitespace-nowrap">
