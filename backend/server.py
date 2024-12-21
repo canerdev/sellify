@@ -1265,8 +1265,10 @@ def get_customer_distribution_by_region():
 @app.route('/api/low-stock/<lower_than>', methods=['GET'])
 def get_low_stock_products(lower_than):
     query = """
-    SELECT * FROM products
-    WHERE products.stockCount < %s
+    SELECT id, name, stockCount, lastSold 
+    FROM products
+    WHERE stockCount < %s
+    ORDER BY stockCount 
     """
     
     try:

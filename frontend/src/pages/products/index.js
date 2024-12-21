@@ -1,7 +1,11 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import { getNumberOfProducts, getProductsByFilter, deleteProduct } from "../api/products";
+import {
+  getNumberOfProducts,
+  getProductsByFilter,
+  deleteProduct,
+} from "../api/products";
 import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -29,7 +33,7 @@ export default function Products() {
   };
 
   const handleLowStockClick = () => {
-    router.push('/low-stock');
+    router.push("/low-stock");
   };
 
   useEffect(() => {
@@ -54,44 +58,21 @@ export default function Products() {
   } else {
     return (
       <Layout>
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Products</h1>
-            <div className="space-x-4">
-              <Button
-                variant="outline"
-                onClick={handleLowStockClick}
-                className="flex items-center gap-2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M3 3v18h18" />
-                  <path d="m19 9-5 5-4-4-3 3" />
-                </svg>
-                View Low Stock
-              </Button>
-            </div>
-          </div>
+        <div>
           <IndexTable
             headers={headers}
+            items={products}
             columns={columns}
-            data={products}
-            handleDelete={handleDelete}
-            handleView={handleView}
+            count={count}
+            description={"Products Table"}
+            limit={limit}
+            setOffset={setOffset}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            setOffset={setOffset}
-            limit={limit}
-            count={count}
+            onDelete={handleDelete}
+            onView={handleView}
+            tableName="products"
+            setAdded={setAdded}
           />
         </div>
       </Layout>

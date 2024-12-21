@@ -12,6 +12,7 @@ import {
 import{
   getCustomerDistributionByRegion
 } from "./api/customers";
+import LowStockTable from "@/components/LowStockTable";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -136,6 +137,7 @@ export default function Home() {
             labelField="region"
             tooltipFunction= {createTooltipContent}
           />
+          <LowStockTable ></LowStockTable>
         </div>
       </div>
     </Layout>

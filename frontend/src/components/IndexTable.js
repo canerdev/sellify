@@ -51,7 +51,7 @@ export default function IndexTable({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newRecord), // Convert record data to JSON string
+        body: JSON.stringify(newRecord),
       });
 
       if (!response.ok) {
