@@ -10,6 +10,7 @@ import IndexTable from "@/components/IndexTable";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
+import { Button } from "@/components/ui/button"; // Assuming you're using shadcn/ui
 
 export default function Products() {
   const [offset, setOffset] = useState(0);
@@ -20,7 +21,6 @@ export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
-
   const router = useRouter();
 
   async function handleDelete(id) {
@@ -30,6 +30,10 @@ export default function Products() {
 
   const handleView = (id) => {
     router.push(`/products/${id}`);
+  };
+
+  const handleLowStockClick = () => {
+    router.push("/low-stock");
   };
 
   useEffect(() => {
@@ -43,7 +47,6 @@ export default function Products() {
       setDeleted(false);
       setAdded(false);
     }
-
     fetchProducts();
   }, [offset, limit, currentPage, deleted, added]);
 
@@ -51,11 +54,7 @@ export default function Products() {
   const columns = ["id", "name", "price", "categoryID", "stockCount"];
 
   if (isLoading) {
-    return (
-      <Layout>
-        <Loading />
-      </Layout>
-    );
+    return <Loading />;
   } else {
     return (
       <Layout>

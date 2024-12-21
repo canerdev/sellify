@@ -60,3 +60,18 @@ export async function getProductById(id) {
   }
   return await res.json();
 }
+
+export async function getLowStockProducts(threshold) {
+  try {
+    const res = await fetch(`http://localhost:8080/api/low-stock/${threshold}`);
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    const data = await res.json();
+    console.log("API Response:", data); // Add this to debug
+    return data;
+  } catch (error) {
+    console.error("Error fetching low stock products:", error);
+    throw error;
+  }
+}
