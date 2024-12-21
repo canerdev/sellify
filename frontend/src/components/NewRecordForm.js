@@ -41,7 +41,7 @@ const NewRecordForm = ({ isOpen, onClose, onSubmit, tableName }) => {
       if (IS_NULLABLE === "NO" && !value) {
         toast.error(`Field "${COLUMN_NAME}" is required.`, {
           position: "bottom-right",
-          autoClose: 2000,
+          autoClose: 4000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -62,7 +62,7 @@ const NewRecordForm = ({ isOpen, onClose, onSubmit, tableName }) => {
         ) {
           toast.error(`Field "${COLUMN_NAME}" must be a valid ${DATA_TYPE}.`, {
             position: "bottom-right",
-            autoClose: 2000,
+            autoClose: 4000,
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,

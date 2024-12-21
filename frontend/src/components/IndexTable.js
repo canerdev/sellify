@@ -62,7 +62,7 @@ export default function IndexTable({
           }`,
           {
             position: "bottom-right",
-            autoClose: 2000,
+            autoClose: 4000,
           }
         );
         return;
@@ -84,7 +84,7 @@ export default function IndexTable({
       console.error(`Error adding record to ${tableName}:`, error);
       toast.error("An error occurred while adding the record.", {
         position: "bottom-right",
-        autoClose: 2000,
+        autoClose: 4000,
       });
     }
   };

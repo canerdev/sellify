@@ -291,13 +291,17 @@ def get_customers_count():
 @app.route('/api/orders', methods=['POST'])
 def create_order():
     data = request.json
-    query = 'INSERT INTO orders (id, customerID, employeeID, orderDate, paymentMethod, trackingNumber, status) VALUES (%s, %s, %s, %s, %s, %s, %s)'
-    values = (data['id'], data['customerID'], data['employeeID'], data['orderDate'], data['paymentMethod'], data['trackingNumber'], data['status'])
+    query_insert = 'INSERT INTO orders (id, customerID, employeeID, orderDate, paymentMethod, trackingNumber, status) VALUES (%s, %s, %s, %s, %s, %s, %s)'
+    query_update = 'UPDATE customers SET lastOrderID = %s WHERE id = %s'
+
+    values_insert = (data['id'], data['customerID'], data['employeeID'], data['orderDate'], data['paymentMethod'], data['trackingNumber'], data['status'])
+    values_update = (data['id'], data['customerID'])
 
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            cursor.execute(query, values)
+            cursor.execute(query_insert, values_insert)
+            cursor.execute(query_update, values_update)
             connection.commit()
         return jsonify({'message': 'Order created successfully!'}), 201
     except Exception as e:
@@ -679,16 +683,22 @@ def get_categories_count():
 @app.route('/api/employees', methods=['POST'])
 def create_employee():
     data = request.json
-    query = '''
+    query_insert = '''
         INSERT INTO employees (name, gender, country, salary, age, departmentID) 
         VALUES (%s, %s, %s, %s, %s, %s)
     '''
-    values = (data['name'], data['gender'], data['country'], data['salary'], data['age'], data['departmentID'])
+    query_update = '''
+        UPDATE departments SET employeeCount = employeeCount + 1 WHERE id = %s
+    '''
+    
+    values_insert = (data['name'], data['gender'], data['country'], data['salary'], data['age'], data['departmentID'])
+    values_update = (data['departmentID'])
 
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            cursor.execute(query, values)
+            cursor.execute(query_insert, values_insert)
+            cursor.execute(query_update, values_update)
             connection.commit()
         return jsonify({'message': 'Employee created successfully!'}), 201
     except Exception as e:
@@ -817,6 +827,23 @@ def get_employees_count():
 
 
 # ***************** SHIPMENT MODES *****************
+# CREATE SHIPMENT MODE
+@app.route('/api/shippment-modes', methods=['POST'])
+def create_shipment_mode():
+    data = request.json
+    query = 'INSERT INTO shipmentModes (name, description, estimatedTime, cost) VALUES (%s, %s, %s, %s)'
+    values = (data['name'], data['description'], data['estimatedTime'], data['cost'])
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            connection.commit()
+        return jsonify({'message': 'Shipment mode created successfully!'}), 201
+    except Exception as e:
+        return jsonify({'error': f'Failed to create shipment mode{str(e)}'}), 500
+    finally:
+        connection.close()
 
 # READ SHIPMENT MODES
 @app.route('/api/shipment-modes', methods=['GET'])
@@ -1052,13 +1079,18 @@ def get_shipping_details_count():
 @app.route('/api/order-details', methods=['POST'])
 def create_order_detail():
     data = request.json
-    query = 'INSERT INTO orderDetails (orderID, productID, amount, quantity, discount, profit) VALUES (%s, %s, %s, %s, %s, %s)'
-    values = (data['orderID'], data['productID'], data['amount'], data['quantity'], data['discount'], data['profit'])
+    
+    query_insert = 'INSERT INTO orderDetails (orderID, productID, amount, quantity, discount, profit) VALUES (%s, %s, %s, %s, %s, %s)'
+    query_update = 'ÚPDATE products SET stockCount = stockCount - %s WHERE id = %s'
+
+    values_insert = (data['orderID'], data['productID'], data['amount'], data['quantity'], data['discount'], data['profit'])
+    values_update = (data['quantity'], data['productID'])
 
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            cursor.execute(query, values)
+            cursor.execute(query_insert, values_insert)
+            cursor.execute(query_update, values_update)
             connection.commit()
         return jsonify({'message': 'Order detail created successfully!'}), 201
     except Exception as e:
