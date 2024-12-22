@@ -7,6 +7,7 @@ import {
   deleteShippingDetail,
 } from "../api/shippingDetails";
 import IndexTable from "@/components/IndexTable";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
@@ -21,12 +22,32 @@ export default function ShippingDetails() {
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentShippingDetailId, setCurrentShippingDetailId] = useState(null);
+
   const router = useRouter();
 
   async function handleDelete(id) {
-    await deleteShippingDetail(id);
-    setDeleted(true);
+    setCurrentShippingDetailId(id);
+    setIsDialogOpen(true);
   }
+
+  const confirmDelete = async () => {
+    setIsDialogOpen(false);
+    try {
+      await deleteShippingDetail(currentShippingDetailId);
+      setDeleted(true);
+    } catch (error) {
+      console.error("Failed to delete shipping detail:", error);
+    } finally {
+      setCurrentShippingDetailId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false);
+    setCurrentShippingDetailId(null);
+  };
 
   const handleView = (id) => {
     router.push(`/shipping-details/${id}`);
@@ -87,6 +108,13 @@ export default function ShippingDetails() {
             tableName="shippingDetails"
             setAdded={setAdded}
           />
+          {isDialogOpen && (
+            <ConfirmDialog
+              message="Are you sure you want to delete this shipping detail?"
+              onConfirm={confirmDelete}
+              onCancel={cancelDelete}
+            />
+          )}
         </div>
       </Layout>
     );

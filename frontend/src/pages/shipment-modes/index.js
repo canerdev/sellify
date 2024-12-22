@@ -7,6 +7,7 @@ import {
   deleteShipmentMode,
 } from "../api/shipmentModes";
 import IndexTable from "@/components/IndexTable";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
@@ -21,12 +22,32 @@ export default function ShipmentModes() {
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentShipmentModeId, setCurrentShipmentModeId] = useState(null);
+
   const router = useRouter();
 
   async function handleDelete(id) {
-    await deleteShipmentMode(id);
-    setDeleted(true);
+    setCurrentShipmentModeId(id);
+    setIsDialogOpen(true);
   }
+
+  const confirmDelete = async () => {
+    setIsDialogOpen(false);
+    try {
+      await deleteShipmentMode(currentShipmentModeId);
+      setDeleted(true);
+    } catch (error) {
+      console.error("Failed to delete shipment mode:", error);
+    } finally {
+      setCurrentShipmentModeId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false);
+    setCurrentShipmentModeId(null);
+  };
 
   const handleView = (id) => {
     router.push(`/shipment-modes/${id}`);
@@ -75,6 +96,13 @@ export default function ShipmentModes() {
             tableName="shipmentModes"
             setAdded={setAdded}
           />
+          {isDialogOpen && (
+            <ConfirmDialog
+              message="Are you sure you want to delete this shipment mode?"
+              onConfirm={confirmDelete}
+              onCancel={cancelDelete}
+            />
+          )}
         </div>
       </Layout>
     );

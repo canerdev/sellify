@@ -7,6 +7,7 @@ import {
   deleteDepartment,
 } from "../api/departments";
 import IndexTable from "@/components/IndexTable";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
@@ -21,12 +22,32 @@ export default function Departments() {
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentDepartmentId, setCurrentDepartmentId] = useState(null);
+
   const router = useRouter();
 
   async function handleDelete(id) {
-    await deleteDepartment(id);
-    setDeleted(true);
+    setCurrentDepartmentId(id);
+    setIsDialogOpen(true);
   }
+
+  const confirmDelete = async () => {
+    setIsDialogOpen(false);
+    try {
+      await deleteDepartment(currentDepartmentId);
+      setDeleted(true);
+    } catch (error) {
+      console.error("Failed to delete department:", error);
+    } finally {
+      setCurrentDepartmentId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false);
+    setCurrentDepartmentId(null);
+  };
 
   const handleView = (id) => {
     router.push(`/departments/${id}`);
@@ -75,6 +96,13 @@ export default function Departments() {
             tableName="departments"
             setAdded={setAdded}
           />
+          {isDialogOpen && (
+            <ConfirmDialog
+              message="Are you sure you want to delete this department?"
+              onConfirm={confirmDelete}
+              onCancel={cancelDelete}
+            />
+          )}
         </div>
       </Layout>
     );

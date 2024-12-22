@@ -7,6 +7,7 @@ import {
   deleteOrder,
 } from "../api/orders";
 import IndexTable from "@/components/IndexTable";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
@@ -21,13 +22,33 @@ export default function Orders() {
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false); 
+  const [currentOrderId, setCurrentOrderId] = useState(null);
+
   const router = useRouter();
 
   async function handleDelete(id) {
-    await deleteOrder(id);
-    setDeleted(true);
+    setCurrentOrderId(id); 
+    setIsDialogOpen(true); 
   }
 
+  const confirmDelete = async () => {
+    setIsDialogOpen(false); 
+    try {
+      await deleteOrder(currentOrderId); 
+      setDeleted(true); 
+    } catch (error) {
+      console.error("Failed to delete order:", error);
+    } finally {
+      setCurrentOrderId(null); 
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false); 
+    setCurrentOrderId(null); 
+  };
+  
   const handleView = (id) => {
     router.push(`/orders/${id}`);
   };
@@ -75,6 +96,13 @@ export default function Orders() {
             tableName="orders"
             setAdded={setAdded}
           />
+          {isDialogOpen && (
+            <ConfirmDialog
+              message="Are you sure you want to delete this order?"
+              onConfirm={confirmDelete}
+              onCancel={cancelDelete}
+            />
+          )}
         </div>
       </Layout>
     );

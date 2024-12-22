@@ -7,6 +7,7 @@ import {
   deleteCategory,
 } from "../api/categories";
 import IndexTable from "@/components/IndexTable";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
@@ -21,12 +22,32 @@ export default function Categories() {
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false); 
+  const [currentCategoryId, setCurrentCategoryId] = useState(null);
+
   const router = useRouter();
 
   async function handleDelete(id) {
-    await deleteCategory(id);
-    setDeleted(true);
+    setCurrentCategoryId(id); 
+    setIsDialogOpen(true); 
   }
+
+  const confirmDelete = async () => {
+    setIsDialogOpen(false);
+    try {
+      await deleteCategory(currentCategoryId);
+      setDeleted(true);
+    } catch (error) {
+      console.error("Failed to delete category:", error);
+    } finally {
+      setCurrentCategoryId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false);
+    setCurrentCategoryId(null);
+  };
 
   const handleView = (id) => {
     router.push(`/categories/${id}`);
@@ -75,6 +96,13 @@ export default function Categories() {
             tableName="categories"
             setAdded={setAdded}
           />
+          {isDialogOpen && (
+            <ConfirmDialog
+              message="Are you sure you want to delete this category?"
+              onConfirm={confirmDelete}
+              onCancel={cancelDelete}
+            />
+          )}
         </div>
       </Layout>
     );
