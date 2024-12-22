@@ -3,6 +3,7 @@
 import Layout from "../layout/Layout";
 import { getNumberOfUsers, getUsersWithFilter, deleteUser } from "../api/users";
 import IndexTable from "@/components/IndexTable";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
@@ -17,12 +18,32 @@ export default function Users() {
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null)
+
   const router = useRouter();
 
   async function handleDelete(id) {
-    await deleteUser(id);
-    setDeleted(true);
+    setCurrentUserId(id);
+    setIsDialogOpen(true);
   }
+
+  const confirmDelete = async () => {
+    setIsDialogOpen(false);
+    try {
+      await deleteUser(currentUserId);
+      setDeleted(true);
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+    } finally {
+      setCurrentUserId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false);
+    setCurrentUserId(null);
+  };
 
   const handleView = (id) => {
     router.push(`/users/${id}`);
@@ -71,6 +92,13 @@ export default function Users() {
             tableName="employees"
             setAdded={setAdded}
           />
+          {isDialogOpen && (
+            <ConfirmDialog
+              message="Are you sure you want to delete this user?"
+              onConfirm={confirmDelete}
+              onCancel={cancelDelete}
+            />
+          )}
         </div>
       </Layout>
     );

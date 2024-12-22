@@ -7,6 +7,7 @@ import {
   deleteProduct,
 } from "../api/products";
 import IndexTable from "@/components/IndexTable";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
@@ -21,12 +22,33 @@ export default function Products() {
   const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentProductId, setCurrentProductId] = useState(null)
+
   const router = useRouter();
 
   async function handleDelete(id) {
-    await deleteProduct(id);
-    setDeleted(true);
+    setCurrentProductId(id);
+    setIsDialogOpen(true);
   }
+
+  const confirmDelete = async () => {
+    setIsDialogOpen(false);
+    try {
+      await deleteProduct(currentProductId);
+      setDeleted(true);
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+    } finally {
+      setCurrentProductId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false);
+    setCurrentProductId(null);
+  };
 
   const handleView = (id) => {
     router.push(`/products/${id}`);
@@ -74,6 +96,13 @@ export default function Products() {
             tableName="products"
             setAdded={setAdded}
           />
+          {isDialogOpen && (
+            <ConfirmDialog
+              message="Are you sure you want to delete this product?"
+              onConfirm={confirmDelete}
+              onCancel={cancelDelete}
+            />
+          )}
         </div>
       </Layout>
     );

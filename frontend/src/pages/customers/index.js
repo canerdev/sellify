@@ -7,6 +7,7 @@ import {
   deleteCustomer,
 } from "../api/customers";
 import IndexTable from "@/components/IndexTable";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
@@ -21,12 +22,32 @@ export default function Customers() {
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [currentCustomerId, setCurrentCustomerId] = useState(null);
+
   const router = useRouter();
 
   async function handleDelete(id) {
-    await deleteCustomer(id);
-    setDeleted(true);
+    setCurrentCustomerId(id);
+    setIsDialogOpen(true);
   }
+
+  const confirmDelete = async () => {
+    setIsDialogOpen(false);
+    try {
+      await deleteCustomer(currentCustomerId);
+      setDeleted(true);
+    } catch (error) {
+      console.error("Failed to delete customer:", error);
+    } finally {
+      setCurrentCustomerId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDialogOpen(false);
+    setCurrentCustomerId(null);
+  };
 
   const handleView = (id) => {
     router.push(`/customers/${id}`);
@@ -75,6 +96,13 @@ export default function Customers() {
             tableName="customers"
             setAdded={setAdded}
           />
+          {isDialogOpen && (
+            <ConfirmDialog
+              message="Are you sure you want to delete this customer?"
+              onConfirm={confirmDelete}
+              onCancel={cancelDelete}
+            />
+          )}
         </div>
       </Layout>
     );
