@@ -26,7 +26,7 @@ const ConfirmDialog = ({ onConfirm, onCancel, message }) => {
             variant="outline"
             size="default"
             onClick={onCancel}
-            className="text-[#60A5FA] border-[#60A5FA] hover:bg-[#2563EB] hover:text-white"
+            className="text-[#60A5FA] border-[#60A5FA] hover:bg-[#60A5FA] hover:text-[#0F172A]"
           >
             No
           </Button>
