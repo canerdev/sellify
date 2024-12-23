@@ -1,12 +1,11 @@
 import React from "react";
-import { AlertDescription } from "@/components/ui/Alert";
-import { Button } from "@/components/ui/Button";
+import { AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
 const ConfirmDialog = ({ onConfirm, onCancel, message }) => {
-  
   const handleOutsideClick = (e) => {
     if (e.target.id === "overlay") {
-      onCancel(); 
+      onCancel();
     }
   };
 
@@ -18,9 +17,11 @@ const ConfirmDialog = ({ onConfirm, onCancel, message }) => {
     >
       <div
         className="bg-[#0F172A] p-6 rounded-lg shadow-lg transform translate-x-8"
-        onClick={(e) => e.stopPropagation()} 
+        onClick={(e) => e.stopPropagation()}
       >
-        <AlertDescription className="text-white text-lg text-center">{message}</AlertDescription>
+        <AlertDescription className="text-white text-lg text-center">
+          {message}
+        </AlertDescription>
         <div className="flex justify-end space-x-4 mt-4">
           <Button
             variant="outline"
