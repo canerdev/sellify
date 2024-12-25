@@ -87,9 +87,10 @@ const LowStockTable = () => {
           <Table>
             <TableHeader className="sticky top-0 bg-[#151b23] z-10">
               <TableRow>
-                <TableHead className="w-[70%] text-gray-200">Product Name</TableHead>
-                <TableHead className="w-[20%] text-gray-200">Current Stock</TableHead>
-                <TableHead className="w-[10%] text-gray-200">Last Sold</TableHead>
+                <TableHead className="w-[64%] text-gray-200">Product</TableHead>
+                <TableHead className="w-[14%] text-gray-200">Category</TableHead>
+                <TableHead className="w-[11%] text-gray-200">Current Stock</TableHead>
+                <TableHead className="w-[11%] text-gray-200">Last Sold</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -100,6 +101,9 @@ const LowStockTable = () => {
                 >
                   <TableCell className="font-medium max-w-[200px] first:rounded-l-lg group-hover:first:rounded-l-lg text-gray-200">
                     {item.name}
+                  </TableCell>
+                  <TableCell className="text-gray-200">
+                    {item['categories.name']}
                   </TableCell>
                   <TableCell className="text-gray-200">{item.stockCount}</TableCell>
                   <TableCell className="last:rounded-r-lg group-hover:last:rounded-r-lg text-gray-200">
