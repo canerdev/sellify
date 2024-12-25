@@ -67,7 +67,7 @@ const PieChart = ({
 
   }, [data, caption, valueField, labelField, tooltipFunction, colorScheme, w, h]);
 
-  return <svg ref={ref} className="border-2 border-white rounded-md" style={{ backgroundColor: 'transparent', width: '100%', height: '100%' }}></svg>;
+  return <svg ref={ref} className="rounded-md" style={{ backgroundColor: 'transparent', width: '100%', height: '100%' }}></svg>;
 };
 
 export default PieChart;

@@ -94,7 +94,7 @@ const BarChart = ({ data, xField, yField, caption, w, h, showXLabels = true }) =
     }
   }, [data, xField, yField, caption, showXLabels]);
 
-  return <svg className="border-2 border-white rounded-md" ref={ref}></svg>;
+  return <svg className="rounded-md" ref={ref}></svg>;
 };
 
 export default BarChart;

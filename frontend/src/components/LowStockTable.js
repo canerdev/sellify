@@ -85,7 +85,7 @@ const LowStockTable = () => {
       <div className="relative rounded-md">
         <div className="overflow-auto max-h-[300px]">
           <Table>
-            <TableHeader className="sticky top-0 bg-[#1F2937] z-10">
+            <TableHeader className="sticky top-0 bg-[#151b23] z-10">
               <TableRow>
                 <TableHead className="w-[70%] text-gray-200">Product Name</TableHead>
                 <TableHead className="w-[20%] text-gray-200">Current Stock</TableHead>
@@ -96,7 +96,7 @@ const LowStockTable = () => {
               {data.map((item) => (
                 <TableRow
                   key={item.id}
-                  className="group transition-colors hover:bg-[#1F2937] relative"
+                  className="group transition-colors hover:bg-[#151b23] relative"
                 >
                   <TableCell className="font-medium max-w-[200px] first:rounded-l-lg group-hover:first:rounded-l-lg text-gray-200">
                     {item.name}
@@ -117,7 +117,7 @@ const LowStockTable = () => {
   };
 
   return (
-    <Card className="bg-[#111827] w-full h-full border-2 border-white rounded-md">
+    <Card className="bg-[#080b14] w-full h-full rounded-md">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-center">
           <CardTitle className="text-gray-200">Low Stock Items</CardTitle>

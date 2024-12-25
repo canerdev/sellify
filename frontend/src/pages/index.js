@@ -9,9 +9,7 @@ import {
   getTotalProfitByDay,
   getBestSellerProducts,
 } from "./api/orders";
-import{
-  getCustomerDistributionByRegion
-} from "./api/customers";
+import { getCustomerDistributionByRegion } from "./api/customers";
 import LowStockTable from "@/components/LowStockTable";
 
 const geistSans = localFont({
@@ -74,13 +72,17 @@ export default function Home() {
 
       setBestSellerProducts(data);
     }
-    
+
     async function fetchCustomerDistribution() {
       const data = await getCustomerDistributionByRegion();
       const processedData = data.reduce((acc, item) => {
-        let region = acc.find(r => r.region === item.region);
+        let region = acc.find((r) => r.region === item.region);
         if (!region) {
-          region = { region: item.region, totalCustomers: item.totalCustomersInRegion, states: [] };
+          region = {
+            region: item.region,
+            totalCustomers: item.totalCustomersInRegion,
+            states: [],
+          };
           acc.push(region);
         }
         region.states.push({ name: item.state, customerCount: item.count });
@@ -90,54 +92,66 @@ export default function Home() {
       setCustomerDistribution(processedData);
     }
 
-    
     fetchProfitsByCategory();
     fetchProfitsByDay();
     fetchBestSellerProducts();
     fetchCustomerDistribution();
   }, []);
 
-  // tooltip of piechart for customer distribution by region 
+  // tooltip of piechart for customer distribution by region
   function createTooltipContent(dataItem) {
     let content = `<strong>${dataItem.region}:</strong><br>Total Customers: ${dataItem.totalCustomers}<br><br>States:<br>`;
-    dataItem.states.forEach(state => {
+    dataItem.states.forEach((state) => {
       content += `<strong>${state.name}:</strong> ${state.customerCount}<br>`;
     });
     return content;
   }
-  
+
   return (
     <Layout>
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center m-4">
         <div className="grid grid-cols-2 gap-4">
-          <BarChart
-            data={profitsByCategory}
-            xField="name"
-            yField="total_profit"
-            caption="Total Profit by Category (Last 30 Days)"
-          />
-          <LineChart
-            data={profitsByDay}
-            xField="orderDate"
-            yField="total_profit"
-            caption="Total Profit by Day (Last 30 Days)"
-          />
-          <BarChart
-            data={bestSellerProducts}
-            xField="name"
-            yField="total_quantity"
-            caption="Best Selling Products (Last 30 Days)"
-            className="col-span-2"
-            showXLabels={false}
-          />
-          <PieChart
-            data={customerDistribution}
-            caption="Customer Distribution by Region"
-            valueField="totalCustomers"
-            labelField="region"
-            tooltipFunction= {createTooltipContent}
-          />
-          <LowStockTable ></LowStockTable>
+          <div className="bg-[#080b14] p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <BarChart
+              data={profitsByCategory}
+              xField="name"
+              yField="total_profit"
+              caption="Total Profit by Category (Last 30 Days)"
+            />
+          </div>
+
+          <div className="bg-[#080b14] p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <LineChart
+              data={profitsByDay}
+              xField="orderDate"
+              yField="total_profit"
+              caption="Total Profit by Day (Last 30 Days)"
+            />
+          </div>
+
+          <div className="bg-[#080b14] p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <BarChart
+              data={bestSellerProducts}
+              xField="name"
+              yField="total_quantity"
+              caption="Best Selling Products (Last 30 Days)"
+              showXLabels={false}
+            />
+          </div>
+
+          <div className="bg-[#080b14] p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <PieChart
+              data={customerDistribution}
+              caption="Customer Distribution by Region"
+              valueField="totalCustomers"
+              labelField="region"
+              tooltipFunction={createTooltipContent}
+            />
+          </div>
+
+          <div className="bg-[#080b14] p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 col-span-2">
+            <LowStockTable />
+          </div>
         </div>
       </div>
     </Layout>

@@ -108,7 +108,7 @@ const LineChart = ({ data, xField, yField, caption, w, h }) => {
     }
   }, [data, xField, yField, caption]);
 
-  return <svg className="border-2 border-white rounded-md" ref={ref}></svg>;
+  return <svg className="rounded-md" ref={ref}></svg>;
 };
 
 export default LineChart;
