@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 
 export default function Layout({ children }) {
   return (
-    <div className="flex h-screen overflow-hidden bg-[#111827]">
+    <div className="flex h-screen w-screen fixed overflow-hidden bg-[#111827]">
       <SideBar />
 
       <div className="flex flex-col flex-1">
