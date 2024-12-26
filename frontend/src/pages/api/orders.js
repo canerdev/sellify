@@ -1,5 +1,67 @@
 import { toast } from "react-toastify";
 
+export async function createOrder(data) {
+  try {
+    const res = await fetch("http://localhost:8080/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Order added successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to add order: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
+export async function updateOrder(data) {
+  try {
+    const res = await fetch(`http://localhost:8080/api/orders/${data.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Order updated successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to update order: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
 export async function getAllOrders() {
   const res = await fetch("http://localhost:8080/api/orders");
   if (!res.ok) {

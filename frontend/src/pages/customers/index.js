@@ -53,6 +53,10 @@ export default function Customers() {
     router.push(`/customers/${id}`);
   };
 
+  const handleEdit = (id) => {
+    router.push(`/customers/customer-edit/${id}`);
+  };
+
   useEffect(() => {
     async function fetchCustomers() {
       setIsLoading(true);
@@ -95,6 +99,8 @@ export default function Customers() {
             onView={handleView}
             tableName="customers"
             setAdded={setAdded}
+            createPath="/customers/customer-create"
+            onEdit={handleEdit}
           />
           {isDialogOpen && (
             <ConfirmDialog

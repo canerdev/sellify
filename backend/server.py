@@ -43,8 +43,9 @@ def home():
 @app.route('/api/products', methods=['POST'])
 def create_product():
     data = request.json
+    lastSold = data.get('lastSold', None)
     query = 'INSERT INTO products (id, name, price, categoryID, stockCount, lastSold) VALUES (%s, %s, %s, %s, %s, %s)'
-    values = (data['id'], data['name'], data['price'], data['categoryID'], data['stockCount'], data['lastSold'])
+    values = (data['id'], data['name'], data['price'], data['categoryID'], data['stockCount'], lastSold)
 
     try:
         connection = get_db_connection()
@@ -434,8 +435,9 @@ def get_orders_count():
 @app.route('/api/departments', methods=['POST'])
 def create_department():
     data = request.json
+    department_name = data['name']
     query = 'INSERT INTO departments (name, employeeCount) VALUES (%s, %s)'
-    values = (data['name'], data['employeeCount'])
+    values = (department_name, 0)
 
     try:
         connection = get_db_connection()
@@ -765,23 +767,41 @@ def get_employees_by_filter():
 @app.route('/api/employees/<int:id>', methods=['PUT'])
 def update_employee(id):
     data = request.json
-    query = '''
+
+    get_old_department_query = 'SELECT departmentID FROM employees WHERE id = %s'
+    decrement_old_department_query = 'UPDATE departments SET employeeCount = employeeCount - 1 WHERE id = %s'
+    increment_new_department_query = 'UPDATE departments SET employeeCount = employeeCount + 1 WHERE id = %s'
+    update_employee_query = '''
         UPDATE employees 
         SET name = %s, gender = %s, country = %s, salary = %s, age = %s, departmentID = %s 
         WHERE id = %s
     '''
-    values = (data['name'], data['gender'], data['country'], data['salary'], data['age'], data['departmentID'], id)
 
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
-            cursor.execute(query, values)
+            cursor.execute(get_old_department_query, (id,))
+            old_department = cursor.fetchone()
+
+            if not old_department:
+                return jsonify({'error': 'Employee not found'}), 404
+
+
+            if old_department['departmentID'] != data['departmentID']:  
+                cursor.execute(decrement_old_department_query, (old_department['departmentID'],))
+                cursor.execute(increment_new_department_query, (data['departmentID'],))
+
+
+            values = (data['name'], data['gender'], data['country'], data['salary'], data['age'], data['departmentID'], id)
+            cursor.execute(update_employee_query, values)
             connection.commit()
+
         return jsonify({'message': 'Employee updated successfully!'}), 200
     except Exception as e:
         return jsonify({'error': f'Failed to update employee: {str(e)}'}), 500
     finally:
         connection.close()
+
 
 # DELETE EMPLOYEE
 @app.route('/api/employees/<int:id>', methods=['DELETE'])
@@ -828,11 +848,12 @@ def get_employees_count():
 
 # ***************** SHIPMENT MODES *****************
 # CREATE SHIPMENT MODE
-@app.route('/api/shippment-modes', methods=['POST'])
+@app.route('/api/shipment-modes', methods=['POST'])
 def create_shipment_mode():
     data = request.json
+    description = data.get('description', None)
     query = 'INSERT INTO shipmentModes (name, description, estimatedTime, cost) VALUES (%s, %s, %s, %s)'
-    values = (data['name'], data['description'], data['estimatedTime'], data['cost'])
+    values = (data['name'], description, data['estimatedTime'], data['cost'])
 
     try:
         connection = get_db_connection()
@@ -904,8 +925,9 @@ def get_shipment_modes_by_filter():
 @app.route('/api/shipment-modes/<int:id>', methods=['PUT'])
 def update_shipment_mode(id):
     data = request.json
-    query = 'UPDATE shipmentModes SET name = %s, description = %s WHERE id = %s'
-    values = (data['name'], data['description'], id)
+    description = data.get('description', None)
+    query = 'UPDATE shipmentModes SET name = %s, description = %s, estimatedTime = %s, cost = %s WHERE id = %s'
+    values = (data['name'], description, data['estimatedTime'], data['cost'], id)
 
     try:
         connection = get_db_connection()

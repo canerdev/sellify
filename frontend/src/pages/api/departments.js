@@ -1,5 +1,70 @@
 import { toast } from "react-toastify";
 
+export async function createDepartment(data) {
+  try {
+    const res = await fetch("http://localhost:8080/api/departments", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Department added successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to add department: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
+export async function updateDepartment(data) {
+  try {
+    const res = await fetch(
+      `http://localhost:8080/api/departments/${data.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    if (res.ok) {
+      toast.success("Department updated successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to update department: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
 export async function getAllDepartments() {
   const res = await fetch("http://localhost:8080/api/departments");
   if (!res.ok) {

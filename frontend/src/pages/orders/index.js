@@ -22,35 +22,39 @@ export default function Orders() {
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false); 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
 
   const router = useRouter();
 
   async function handleDelete(id) {
-    setCurrentOrderId(id); 
-    setIsDialogOpen(true); 
+    setCurrentOrderId(id);
+    setIsDialogOpen(true);
   }
 
   const confirmDelete = async () => {
-    setIsDialogOpen(false); 
+    setIsDialogOpen(false);
     try {
-      await deleteOrder(currentOrderId); 
-      setDeleted(true); 
+      await deleteOrder(currentOrderId);
+      setDeleted(true);
     } catch (error) {
       console.error("Failed to delete order:", error);
     } finally {
-      setCurrentOrderId(null); 
+      setCurrentOrderId(null);
     }
   };
 
   const cancelDelete = () => {
-    setIsDialogOpen(false); 
-    setCurrentOrderId(null); 
+    setIsDialogOpen(false);
+    setCurrentOrderId(null);
   };
-  
+
   const handleView = (id) => {
     router.push(`/orders/${id}`);
+  };
+
+  const handleEdit = (id) => {
+    router.push(`/orders/order-edit/${id}`);
   };
 
   useEffect(() => {
@@ -95,6 +99,8 @@ export default function Orders() {
             onView={handleView}
             tableName="orders"
             setAdded={setAdded}
+            createPath="/orders/order-create"
+            onEdit={handleEdit}
           />
           {isDialogOpen && (
             <ConfirmDialog

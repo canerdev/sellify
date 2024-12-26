@@ -19,7 +19,7 @@ export default function Users() {
   const [added, setAdded] = useState(false);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState(null)
+  const [currentUserId, setCurrentUserId] = useState(null);
 
   const router = useRouter();
 
@@ -47,6 +47,10 @@ export default function Users() {
 
   const handleView = (id) => {
     router.push(`/users/${id}`);
+  };
+
+  const hanleEdit = (id) => {
+    router.push(`/users/user-edit/${id}`);
   };
 
   useEffect(() => {
@@ -91,6 +95,8 @@ export default function Users() {
             onView={handleView}
             tableName="employees"
             setAdded={setAdded}
+            createPath="/users/user-create"
+            onEdit={hanleEdit}
           />
           {isDialogOpen && (
             <ConfirmDialog

@@ -17,7 +17,7 @@ CREATE TABLE products (
     price DECIMAL(19, 4) NOT NULL,
     categoryID INT NOT NULL,
     stockCount INT NOT NULL,
-    lastSold DATE,
+    lastSold DATE DEFAULT NULL,
     FOREIGN KEY (categoryID) REFERENCES categories(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
@@ -62,9 +62,9 @@ CREATE TABLE customers (
 
 DROP TABLE IF EXISTS orders;
 CREATE TABLE orders (
-    id VARCHAR(14) PRIMARY KEY,
+    id VARCHAR(14) NOT NULL PRIMARY KEY,
     customerID VARCHAR(8) NOT NULL,
-    employeeID INT,
+    employeeID INT DEFAULT NULL,
     orderDate DATE NOT NULL,
     paymentMethod VARCHAR(20) NOT NULL,
     trackingNumber VARCHAR(10) NOT NULL,
@@ -81,7 +81,7 @@ DROP TABLE IF EXISTS shipmentModes;
 CREATE TABLE shipmentModes (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL UNIQUE,
-    description TEXT,
+    description TEXT DEFAULT NULL,
     estimatedTime VARCHAR(100) NOT NULL,
     cost INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

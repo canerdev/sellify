@@ -53,6 +53,10 @@ export default function Departments() {
     router.push(`/departments/${id}`);
   };
 
+  const handleEdit = (id) => {
+    router.push(`/departments/department-edit/${id}`);
+  };
+
   useEffect(() => {
     async function fetchDepartments() {
       setIsLoading(true);
@@ -95,6 +99,8 @@ export default function Departments() {
             onView={handleView}
             tableName="departments"
             setAdded={setAdded}
+            createPath="/departments/department-create"
+            onEdit={handleEdit}
           />
           {isDialogOpen && (
             <ConfirmDialog
