@@ -42,7 +42,7 @@ export default function IndexTable({
   };
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 md:px-8 py-3">
+    <div className="max-w-screen-xl mx-auto px-4 md:px-8 py-4">
       <div className="items-start justify-between md:flex">
         <div className="max-w-lg">
           <h2 className="text-gray-200 text-2xl font-bold mt-2">
