@@ -60,7 +60,7 @@ export default function EditProductForm({ product }) {
     return (
       <Layout>
         <form
-          className="text-gray-200 flex flex-wrap gap-6 "
+          className="text-gray-200 flex flex-wrap gap-6 px-8 py-4"
           onSubmit={formik.handleSubmit}
         >
           <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
