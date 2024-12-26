@@ -22,14 +22,14 @@ export default function Categories() {
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false); 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentCategoryId, setCurrentCategoryId] = useState(null);
 
   const router = useRouter();
 
   async function handleDelete(id) {
-    setCurrentCategoryId(id); 
-    setIsDialogOpen(true); 
+    setCurrentCategoryId(id);
+    setIsDialogOpen(true);
   }
 
   const confirmDelete = async () => {
@@ -53,6 +53,10 @@ export default function Categories() {
     router.push(`/categories/${id}`);
   };
 
+  const handleEdit = (id) => {
+    router.push(`/categories/category-edit/${id}`);
+  };
+
   useEffect(() => {
     async function fetchCategories() {
       setIsLoading(true);
@@ -68,8 +72,8 @@ export default function Categories() {
     fetchCategories();
   }, [offset, limit, currentPage, deleted, added]);
 
-  const headers = ["ID", "Name", "Description", "Status"];
-  const columns = ["id", "name", "description", "status"];
+  const headers = ["ID", "Name", "Description"];
+  const columns = ["id", "name", "description"];
 
   if (isLoading) {
     return (
@@ -95,6 +99,8 @@ export default function Categories() {
             onView={handleView}
             tableName="categories"
             setAdded={setAdded}
+            createPath="/categories/category-create"
+            onEdit={handleEdit}
           />
           {isDialogOpen && (
             <ConfirmDialog

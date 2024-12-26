@@ -11,7 +11,6 @@ import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Loading from "../loading";
-import { Button } from "@/components/ui/button"; // Assuming you're using shadcn/ui
 
 export default function Products() {
   const [offset, setOffset] = useState(0);
@@ -24,7 +23,7 @@ export default function Products() {
   const [added, setAdded] = useState(false);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentProductId, setCurrentProductId] = useState(null)
+  const [currentProductId, setCurrentProductId] = useState(null);
 
   const router = useRouter();
 
@@ -54,8 +53,8 @@ export default function Products() {
     router.push(`/products/${id}`);
   };
 
-  const handleLowStockClick = () => {
-    router.push("/low-stock");
+  const handleEdit = (id) => {
+    router.push(`/products/product-edit/${id}`);
   };
 
   useEffect(() => {
@@ -95,6 +94,8 @@ export default function Products() {
             onView={handleView}
             tableName="products"
             setAdded={setAdded}
+            createPath="/products/product-create"
+            onEdit={handleEdit}
           />
           {isDialogOpen && (
             <ConfirmDialog

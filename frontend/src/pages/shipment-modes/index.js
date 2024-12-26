@@ -53,6 +53,10 @@ export default function ShipmentModes() {
     router.push(`/shipment-modes/${id}`);
   };
 
+  const handleEdit = (id) => {
+    router.push(`/shipment-modes/shipment-mode-edit/${id}`);
+  };
+
   useEffect(() => {
     async function fetchShipmentModes() {
       setIsLoading(true);
@@ -95,6 +99,8 @@ export default function ShipmentModes() {
             onView={handleView}
             tableName="shipmentModes"
             setAdded={setAdded}
+            createPath="/shipment-modes/shipment-mode-create"
+            onEdit={handleEdit}
           />
           {isDialogOpen && (
             <ConfirmDialog

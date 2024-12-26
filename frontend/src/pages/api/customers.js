@@ -1,5 +1,67 @@
 import { toast } from "react-toastify";
 
+export async function createCustomer(data) {
+  try {
+    const res = await fetch("http://localhost:8080/api/customers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Customer added successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to add customer: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
+export async function updateCustomer(data) {
+  try {
+    const res = await fetch(`http://localhost:8080/api/customers/${data.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Customer updated successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to update customer: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
 export async function getAllCustomers() {
   const res = await fetch("http://localhost:8080/api/customers");
   if (!res.ok) {

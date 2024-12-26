@@ -1,5 +1,67 @@
 import { toast } from "react-toastify";
 
+export async function createCategory(data) {
+  try {
+    const res = await fetch("http://localhost:8080/api/categories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Category added successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to add category: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
+export async function updateCategory(data) {
+  try {
+    const res = await fetch(`http://localhost:8080/api/categories/${data.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Category updated successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to update category: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
 export async function getAllCategories() {
   const res = await fetch("http://localhost:8080/api/categories");
   if (!res.ok) {

@@ -53,6 +53,10 @@ export default function ShippingDetails() {
     router.push(`/shipping-details/${id}`);
   };
 
+  const handleEdit = (id) => {
+    router.push(`/shipping-details/shipping-detail-edit/${id}`);
+  };
+
   useEffect(() => {
     async function fetchShippingDetails() {
       setIsLoading(true);
@@ -107,6 +111,8 @@ export default function ShippingDetails() {
             onView={handleView}
             tableName="shippingDetails"
             setAdded={setAdded}
+            createPath="/shipping-details/shipping-detail-create"
+            onEdit={handleEdit}
           />
           {isDialogOpen && (
             <ConfirmDialog

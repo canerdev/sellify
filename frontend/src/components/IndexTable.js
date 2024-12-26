@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import NewRecordForm from "./NewRecordForm";
-import { toast } from "react-toastify";
+import Link from "next/link";
 
 export default function IndexTable({
   headers,
@@ -16,10 +14,9 @@ export default function IndexTable({
   setCurrentPage,
   onDelete,
   onView,
-  tableName,
-  setAdded,
+  createPath,
+  onEdit,
 }) {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const totalPages = Math.ceil(count / limit);
 
   const handleNextPage = () => {
@@ -44,51 +41,6 @@ export default function IndexTable({
     }
   };
 
-  const handleAddRecord = async (tableName, newRecord) => {
-    try {
-      const response = await fetch(`http://localhost:8080/api/${tableName}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newRecord),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast.error(
-          `Failed to add record to ${tableName}: ${
-            errorData.error || "Unknown error"
-          }`,
-          {
-            position: "bottom-right",
-            autoClose: 4000,
-          }
-        );
-        return;
-      }
-
-      setAdded(true);
-      toast.success(`The record has been successfully added to ${tableName}!`, {
-        position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-        dangerouslySetInnerHTML: true,
-      });
-    } catch (error) {
-      console.error(`Error adding record to ${tableName}:`, error);
-      toast.error("An error occurred while adding the record.", {
-        position: "bottom-right",
-        autoClose: 4000,
-      });
-    }
-  };
-
   return (
     <div className="max-w-screen-xl mx-auto px-4 md:px-8">
       <div className="items-start justify-between md:flex">
@@ -98,12 +50,12 @@ export default function IndexTable({
           </h2>
         </div>
         <div className="mt-3 md:mt-0">
-          <button
-            onClick={() => setIsPopupOpen(true)}
+          <Link
+            href={createPath}
             className="inline-block px-4 py-2 text-white duration-150 font-medium bg-gray-700 border rounded-lg hover:bg-gray-500 active:bg-gray-700 md:text-sm"
           >
             Add new
-          </button>
+          </Link>
         </div>
       </div>
       <div className="mt-12 shadow-sm border rounded-lg overflow-x-auto">
@@ -132,7 +84,13 @@ export default function IndexTable({
                 <td className="text-center px-6 whitespace-nowrap">
                   <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => console.log("Edit", item.id)}
+                      onClick={() => {
+                        if (description == "Shipping Details Table") {
+                          onEdit(item.orderID);
+                        } else {
+                          onEdit(item.id);
+                        }
+                      }}
                       className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
                       aria-label="Edit"
                     >
@@ -202,13 +160,6 @@ export default function IndexTable({
           Next
         </button>
       </div>
-
-      <NewRecordForm
-        isOpen={isPopupOpen}
-        onClose={() => setIsPopupOpen(false)}
-        onSubmit={handleAddRecord}
-        tableName={tableName}
-      />
     </div>
   );
 }
