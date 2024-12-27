@@ -31,6 +31,37 @@ export async function createOrder(data) {
   }
 }
 
+export async function createOrderDetail(data) {
+  try {
+    const res = await fetch("http://localhost:8080/api/order-details", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Order details added successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to add order details: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
 export async function updateOrder(data) {
   try {
     const res = await fetch(`http://localhost:8080/api/orders/${data.id}`, {

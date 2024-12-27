@@ -110,15 +110,6 @@ export default function SideBar() {
 
               <span className="mx-2 text-sm font-medium">Shipping Details</span>
             </Link>
-
-            <Link
-              className="flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg text-gray-300 hover:bg-gray-300 hover:text-gray-600"
-              href="/settings"
-            >
-              <FaGear className="w-5 h-5" />
-
-              <span className="mx-2 text-sm font-medium">Settings</span>
-            </Link>
           </nav>
 
           <div className="mt-6">
