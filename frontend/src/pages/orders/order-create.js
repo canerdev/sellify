@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { getAllCustomers } from "../api/customers";
 import { getAllUsers } from "../api/users";
 import { getAllProducts } from "../api/products";
-import Select from "react-select";
 
 export default function CreateOrderForm() {
   const [loading, setLoading] = useState(false);
@@ -16,36 +15,6 @@ export default function CreateOrderForm() {
   const [customers, setCustomers] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [products, setProducts] = useState([]);
-
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      backgroundColor: "#1f2937", // Tailwind'deki bg-gray-800 rengi
-      borderColor: "#4a5568", // Tailwind'deki border-gray-600 rengi
-      color: "#e2e8f0", // Tailwind'deki text-gray-200 rengi
-    }),
-    menu: (provided) => ({
-      ...provided,
-      backgroundColor: "#1f2937", // Menü arka planı için aynı renk
-    }),
-    multiValue: (provided) => ({
-      ...provided,
-      backgroundColor: "#1f2937", // Seçilen değerlerin arka plan rengi
-      color: "#e2e8f0", // Seçilen değerlerin metin rengi
-    }),
-    multiValueLabel: (provided) => ({
-      ...provided,
-      color: "#e2e8f0", // Seçilen değerlerin etiket metin rengi
-    }),
-    multiValueRemove: (provided) => ({
-      ...provided,
-      color: "#e2e8f0", // Çıkarma butonu rengi
-      ":hover": {
-        backgroundColor: "#4a5568", // Hover durumunda arka plan
-        color: "#fff", // Hover durumunda metin rengi
-      },
-    }),
-  };
 
   useEffect(() => {
     async function fetchData() {
@@ -68,7 +37,7 @@ export default function CreateOrderForm() {
       paymentMethod: "",
       trackingNumber: "",
       status: "",
-      productID: [],
+      productID: "",
       amount: "",
       quantity: "",
       discount: "",
@@ -76,9 +45,11 @@ export default function CreateOrderForm() {
     },
     validationSchema: Yup.object({
       id: Yup.string()
-        .length(14, "Must be exactly 14 characters")
-        .required("ID is required"),
-
+        .matches(
+          /^[A-Z]{2}-\d{4}-\d{6}$/,
+          "Order ID must be in the format XX-0000-000000"
+        )
+        .required("Order ID is required"),
       customerID: Yup.string().required("Customer ID is required"),
       employeeID: Yup.number(),
       orderDate: Yup.date().required("Order date is required"),
@@ -247,29 +218,23 @@ export default function CreateOrderForm() {
 
         {/* Product ID Field */}
         <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-          <label htmlFor="productID">Products*</label>
-          <Select
-            id="productID"
+          <label htmlFor="productID">Product*</label>
+          <select
             name="productID"
-            isMulti
-            options={products.map((product) => ({
-              value: product.id,
-              label: product.name,
-            }))}
-            value={formik.values.productID.map((id) => {
-              const product = products.find((p) => p.id === id);
-              return { value: id, label: product?.name };
-            })}
-            onChange={(selectedOptions) => {
-              const selectedIds = selectedOptions.map((option) => option.value);
-              formik.setFieldValue("productID", selectedIds);
-            }}
+            id="productID"
+            value={formik.values.productID}
+            onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            styles={customStyles}
-          />
-          {formik.touched.productID && formik.errors.productID ? (
+            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
+          >
+            <option value="">Select a Product</option>
+            {products.map((product) => (
+              <option key={product.id} value={product.id}>
+                {product.name}
+              </option>
+            ))}
+          </select>
+          {formik.touched.employeeID && formik.errors.productID ? (
             <div className="error-message">{formik.errors.productID}</div>
           ) : null}
         </div>
