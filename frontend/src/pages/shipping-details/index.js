@@ -2,9 +2,8 @@
 
 import Layout from "../layout/Layout";
 import {
-  getNumberOfShippingDetails,
-  getShippingDetailsWithFilter,
   deleteShippingDetail,
+  getAllShippingDetails
 } from "../api/shippingDetails";
 import IndexTable from "@/components/IndexTable";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
@@ -13,12 +12,8 @@ import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function ShippingDetails() {
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
-  const [count, setCount] = useState(0);
   const [shippingDetails, setShippingDetails] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -60,9 +55,7 @@ export default function ShippingDetails() {
   useEffect(() => {
     async function fetchShippingDetails() {
       setIsLoading(true);
-      const shippingDetails = await getShippingDetailsWithFilter(offset, limit);
-      const countShippingDetails = await getNumberOfShippingDetails();
-      setCount(countShippingDetails.count);
+      const shippingDetails = await getAllShippingDetails();
       setShippingDetails(shippingDetails);
       setIsLoading(false);
       setDeleted(false);
@@ -70,7 +63,9 @@ export default function ShippingDetails() {
     }
 
     fetchShippingDetails();
-  }, [offset, limit, currentPage, deleted, added]);
+  }, [deleted, added]);
+
+  console.log(shippingDetails);
 
   const headers = [
     "Order ID",
@@ -101,12 +96,7 @@ export default function ShippingDetails() {
             headers={headers}
             items={shippingDetails}
             columns={columns}
-            count={count}
             description={"Shipping Details Table"}
-            limit={limit}
-            setOffset={setOffset}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
             tableName="shippingDetails"
