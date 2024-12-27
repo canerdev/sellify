@@ -114,8 +114,19 @@ def get_products_by_filter():
 @app.route('/api/products/<string:id>', methods=['PUT'])
 def update_product(id):
     data = request.json
+
+    lastSold = data.get('lastSold', None)
+    try:
+        if lastSold:
+            parsed_date = datetime.strptime(lastSold, '%a, %d %b %Y %H:%M:%S %Z')
+            formatted_date = parsed_date.strftime('%Y-%m-%d')
+        else:
+            formatted_date = None
+    except ValueError as e:
+        return jsonify({'error': f'Failed to parse lastSold date: {str(e)}'}), 400
+    
     query = 'UPDATE products SET id = %s, name = %s, price = %s, categoryID = %s, stockCount = %s, lastSold = %s WHERE id = %s'
-    values = (data['id'], data['name'], data['price'], data['categoryID'], data['stockCount'], data['lastSold'], id)
+    values = (data['id'], data['name'], data['price'], data['categoryID'], data['stockCount'], formatted_date, id)
 
     try:
         connection = get_db_connection()
