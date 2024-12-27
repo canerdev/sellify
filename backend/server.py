@@ -44,8 +44,8 @@ def home():
 def create_product():
     data = request.json
     lastSold = data.get('lastSold', None)
-    query = 'INSERT INTO products (id, name, price, categoryID, stockCount, lastSold) VALUES (%s, %s, %s, %s, %s, %s)'
-    values = (data['id'], data['name'], data['price'], data['categoryID'], data['stockCount'], lastSold)
+    query = 'INSERT INTO products (id, name, price, cost, categoryID, stockCount, lastSold) VALUES (%s, %s, %s, %s, %s, %s)'
+    values = (data['id'], data['name'], data['price'], data['cost'], data['categoryID'], data['stockCount'], lastSold)
 
     try:
         connection = get_db_connection()
@@ -125,8 +125,8 @@ def update_product(id):
     except ValueError as e:
         return jsonify({'error': f'Failed to parse lastSold date: {str(e)}'}), 400
     
-    query = 'UPDATE products SET id = %s, name = %s, price = %s, categoryID = %s, stockCount = %s, lastSold = %s WHERE id = %s'
-    values = (data['id'], data['name'], data['price'], data['categoryID'], data['stockCount'], formatted_date, id)
+    query = 'UPDATE products SET id = %s, name = %s, price = %s, cost = %s, categoryID = %s, stockCount = %s, lastSold = %s WHERE id = %s'
+    values = (data['id'], data['name'], data['price'], data['cost'] , data['categoryID'], data['stockCount'], formatted_date, id)
 
     try:
         connection = get_db_connection()

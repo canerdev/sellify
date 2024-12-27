@@ -71,8 +71,8 @@ export default function Products() {
     fetchProducts();
   }, [offset, limit, currentPage, deleted, added]);
 
-  const headers = ["ID", "Name", "Price", "Category", "Stock"];
-  const columns = ["id", "name", "price", "categoryID", "stockCount"];
+  const headers = ["ID", "Name", "Price", "Cost" , "Category", "Stock"];
+  const columns = ["id", "name", "price", "cost" , "categoryID", "stockCount"];
 
   if (isLoading) {
     return <Loading />;

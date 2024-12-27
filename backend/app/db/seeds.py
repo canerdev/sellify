@@ -69,20 +69,25 @@ def loadCategories(cursor):
 
 def loadProducts(cursor):
     try:
-        df = pd.read_csv("data/tables/products.csv")
-        df['lastSold'] = pd.to_datetime(df['lastSold'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
-        df['price'] = df['price'].astype(str).str.replace('"', '').str.replace(',', '.')
+        df = pd.read_csv("data/tables/products.csv", quotechar='"', skipinitialspace=True)
+
+        df['lastSold'] = pd.to_datetime(df['lastSold'], format='%Y-%m-%d', errors='coerce')
+        
+        
+        df['price'] = df['price'].astype(str).str.replace('"', '').str.replace(',', '.').astype(float)
+        df['cost'] = df['cost'].astype(str).str.replace('"', '').str.replace(',', '.').astype(float)
 
         for _, row in df.iterrows():
             try:
                 insert_query = """
-                INSERT INTO products (id, name, price, categoryID, stockCount, lastSold)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO products (id, name, price, cost, categoryID, stockCount, lastSold)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
                 values = (
                     row['id'],
                     row['name'],
-                    float(row['price']),
+                    row['price'],
+                    row['cost'],
                     row['categoryID'],
                     row['stockCount'],
                     row['lastSold']
@@ -92,9 +97,10 @@ def loadProducts(cursor):
                 print(f"Error processing product {row['id']}: {ve}")
                 print(f"Problem row: {row}")
                 continue
-        print(f"Successfully inserted products table")
+        print("Successfully inserted products table")
     except Exception as e:
         print(f"Error loading products: {str(e)}")
+
 
 
 def loadDepartments(cursor):
