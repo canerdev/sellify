@@ -5,6 +5,7 @@ import {
   getCategoriesWithFilter,
   getNumberOfCategories,
   deleteCategory,
+  getAllCategories
 } from "../api/categories";
 import IndexTable from "@/components/IndexTable";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
@@ -13,12 +14,8 @@ import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Categories() {
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
-  const [count, setCount] = useState(0);
   const [categories, setCategories] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -60,9 +57,7 @@ export default function Categories() {
   useEffect(() => {
     async function fetchCategories() {
       setIsLoading(true);
-      const categories = await getCategoriesWithFilter(offset, limit);
-      const categoriesCount = await getNumberOfCategories();
-      setCount(categoriesCount.count);
+      const categories = await getAllCategories();
       setCategories(categories);
       setIsLoading(false);
       setDeleted(false);
@@ -70,7 +65,7 @@ export default function Categories() {
     }
 
     fetchCategories();
-  }, [offset, limit, currentPage, deleted, added]);
+  }, [deleted, added]);
 
   const headers = ["ID", "Name", "Description"];
   const columns = ["id", "name", "description"];
@@ -89,12 +84,7 @@ export default function Categories() {
             headers={headers}
             items={categories}
             columns={columns}
-            count={count}
             description={"Categories Table"}
-            limit={limit}
-            setOffset={setOffset}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
             tableName="categories"

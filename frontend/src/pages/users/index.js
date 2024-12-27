@@ -1,7 +1,7 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import { getNumberOfUsers, getUsersWithFilter, deleteUser } from "../api/users";
+import { deleteUser, getAllUsers } from "../api/users";
 import IndexTable from "@/components/IndexTable";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
@@ -9,12 +9,8 @@ import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Users() {
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
-  const [count, setCount] = useState(0);
   const [users, setUsers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -56,9 +52,7 @@ export default function Users() {
   useEffect(() => {
     async function fetchUsers() {
       setIsLoading(true);
-      const users = await getUsersWithFilter(offset, limit);
-      const usersCount = await getNumberOfUsers();
-      setCount(usersCount.count);
+      const users = await getAllUsers();
       setUsers(users);
       setIsLoading(false);
       setDeleted(false);
@@ -66,7 +60,7 @@ export default function Users() {
     }
 
     fetchUsers();
-  }, [offset, limit, currentPage, deleted, added]);
+  }, [deleted, added]);
 
   const headers = ["ID", "Name", "Department"];
   const columns = ["id", "name", "departmentID"];
@@ -85,12 +79,7 @@ export default function Users() {
             headers={headers}
             items={users}
             columns={columns}
-            count={count}
             description={"Users Table"}
-            limit={limit}
-            setOffset={setOffset}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
             tableName="employees"
