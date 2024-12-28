@@ -15,6 +15,7 @@ CREATE TABLE products (
     id VARCHAR(15) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     price DECIMAL(19, 4) NOT NULL,
+    cost DECIMAL(19,4) NOT NULL,
     categoryID INT NOT NULL,
     stockCount INT NOT NULL,
     lastSold DATE DEFAULT NULL,
