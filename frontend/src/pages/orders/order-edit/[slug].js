@@ -66,7 +66,7 @@ export default function EditOrderForm({ order }) {
       status: Yup.string()
         .max(10, "Max 10 characters")
         .required("Status is required"),
-      productID: Yup.array()
+      productID: Yup.string()
         .min(1, "At least one product must be selected")
         .required("Product ID is required"),
       amount: Yup.number().required("Amount is required"),
