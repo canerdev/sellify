@@ -19,7 +19,7 @@ export default function IndexTable({
   const dataGridColumns = columns.map((column, index) => ({
     field: column,
     headerName: headers[index],
-    flex: 1, // Use flex to allow columns to fill available space
+    flex: 1,
   }));
 
   dataGridColumns.push({
@@ -95,8 +95,8 @@ export default function IndexTable({
         <DataGrid
           rows={items}
           columns={dataGridColumns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[5, 10, 25, 50]}
+          initialState={{ pagination: {paginationModel} }}
+          pageSizeOptions={[5, 10, 25, 50, 100]}
           checkboxSelection
           pagination
           getRowId={(row) => {
@@ -115,12 +115,12 @@ export default function IndexTable({
             '& .MuiDataGrid-row': {
               transition: 'background-color 0.2s ease',
               '&:hover': {
-                backgroundColor: '#1f2937', // Hover effect
+                backgroundColor: '#1f2937',
               },
               '&.Mui-selected': {
-                backgroundColor: '#1a2235', // Selected row color
+                backgroundColor: '#1a2235',
                 '&:hover': {
-                  backgroundColor: '#243145', // Selected row hover color
+                  backgroundColor: '#243145', 
                 },
               },
             },
@@ -129,16 +129,14 @@ export default function IndexTable({
               backgroundColor: '#0f1420',
             },
             '& .MuiDataGrid-sortIcon': {
-              color: 'white !important', // Ensure sorting icons are visible
+              color: 'white !important', 
             },
             '& .MuiCheckbox-root': {
               color: 'white !important',
             },
-            '& .MuiDataGrid-virtualScroller': {
-              backgroundColor: '#080b14',
-            },
-            '& .MuiDataGrid-menuIcon': {
-              color: 'white !important', // Fix for the three dots
+            '& .MuiDataGrid-menuIconButton': {
+              opacity: 1,
+              color: '#4d5e63',
             },
             '& .MuiDataGrid-footerContainer': {
               backgroundColor: '#080b14',

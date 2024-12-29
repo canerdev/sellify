@@ -44,7 +44,7 @@ def home():
 def create_product():
     data = request.json
     lastSold = data.get('lastSold', None)
-    query = 'INSERT INTO products (id, name, price, cost, categoryID, stockCount, lastSold) VALUES (%s, %s, %s, %s, %s, %s)'
+    query = 'INSERT INTO products (id, name, price, cost, categoryID, stockCount, lastSold) VALUES (%s, %s, %s, %s, %s, %s, %s)'
     values = (data['id'], data['name'], data['price'], data['cost'], data['categoryID'], data['stockCount'], lastSold)
 
     try:
@@ -171,6 +171,29 @@ def get_products_count():
     finally:
         connection.close()
 
+# GET PRODUCTS BY IN THE CURRENT ORDER
+@app.route('/api/products/current-order/<string:orderID>', methods=['GET'])
+def get_products_current_order(orderID):
+    # | id | name| price    | cost     | categoryID | stockCount | lastSold   |
+    query = """
+        SELECT productID, categoryID, name, price, stockCount, cost, lastSold
+        FROM orderdetails 
+        LEFT JOIN products 
+        ON orderdetails.productID = products.id 
+        WHERE orderID = %s
+    """
+    values = (orderID,)
+
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query, values)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get products: {str(e)}'}), 500
+    finally:
+        connection.close()
 
 # ***************** CUSTOMERS *****************
 
@@ -440,6 +463,21 @@ def get_orders_count():
     finally:
         connection.close()
 
+# GET TRACKING NUMBERS
+@app.route('/api/orders/tracking-numbers', methods=['GET'])
+def get_tracking_numbers():
+    query = 'SELECT trackingNumber FROM orders'
+    try:
+        connection = get_db_connection()
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            result = cursor.fetchall()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': f'Failed to get tracking numbers{str(e)}'}), 500
+    finally:
+        connection.close()
+        
 # ***************** DEPARTMENTS *****************
 
 # CREATE DEPARTMENT
@@ -1189,8 +1227,8 @@ def get_order_details_by_filter():
 @app.route('/api/order-details/<string:orderID>', methods=['PUT'])
 def update_order_detail(orderID):
     data = request.json
-    query = 'UPDATE orderDetails SET productID = %s, amount = %s, quantity = %s, discount = %s, profit = %s WHERE orderID = %s'
-    values = (data['productID'], data['amount'], data['quantity'], data['discount'], data['profit'], orderID)
+    query = 'UPDATE orderDetails SET productID = %s, amount = %s, quantity = %s, discount = %s, profit = %s WHERE orderID = %s AND productID = %s'
+    values = (data['productID'], data['amount'], data['quantity'], data['discount'], data['profit'], orderID, data['productID'])
 
     try:
         connection = get_db_connection()
@@ -1429,4 +1467,3 @@ def homepage():
 
 if __name__ == '__main__':
     app.run(host='localhost', debug=True, port=8080)
-    

@@ -3,29 +3,30 @@ import { useFormik } from "formik";
 import { debounce } from "lodash";
 import * as Yup from "yup";
 import Layout from "@/pages/layout/Layout";
-import { updateOrder, getOrderById } from "@/pages/api/orders";
+import { updateOrder, getOrderById, updateOrderDetail, getCurrentProducts } from "@/pages/api/orders";
 import { useRouter } from "next/navigation";
 import { getAllCustomers } from "@/pages/api/customers";
 import { getAllUsers } from "@/pages/api/users";
 import { getAllProducts } from "@/pages/api/products";
 import Loading from "@/pages/loading";
+import { toast } from "react-toastify";
 
 export default function EditOrderForm({ order }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [customers, setCustomers] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [currentProducts, setCurrentProducts] = useState([]);
   const [initialValues, setInitialValues] = useState(order);
 
   useEffect(() => {
     async function fetchData() {
       const customers = await getAllCustomers();
       const employees = await getAllUsers();
-      const products = await getAllProducts();
+      const currentProducts = await getCurrentProducts(formik.values.id);
       setCustomers(customers);
       setEmployees(employees);
-      setProducts(products);
+      setCurrentProducts(currentProducts);
     }
     fetchData();
   }, []);
@@ -66,18 +67,52 @@ export default function EditOrderForm({ order }) {
       status: Yup.string()
         .max(10, "Max 10 characters")
         .required("Status is required"),
-      productID: Yup.array()
+      productID: Yup.string()
         .min(1, "At least one product must be selected")
         .required("Product ID is required"),
-      amount: Yup.number().required("Amount is required"),
       quantity: Yup.number().required("Quantity is required"),
       discount: Yup.number().required("Discount is required"),
-      profit: Yup.number().required("Profit is required"),
     }),
 
     onSubmit: debounce(async (values, { resetForm }) => {
+      console.log(currentProducts);
+      const selectedProduct = currentProducts.find((product) => product.productID === values.productID);
+      console.log(selectedProduct);
+
+      // check if there are enough products in stock
+      if (values.quantity > selectedProduct.stockCount) {
+        toast.error(`Cannot order more than ${selectedProduct.stockCount} items of ${selectedProduct.name}.`, {
+          position: "bottom-right",
+          autoClose: 2000,
+        });
+        return;
+      }
+      
+      const price = selectedProduct ? selectedProduct.price : 0;
+      const amount = values.quantity * price * (1 - values.discount / 100);
+      const profit = amount - (values.quantity * selectedProduct.cost);
+      values.amount = amount;
+      values.profit = profit;
+      
       setLoading(true);
-      await updateOrder(values);
+      await updateOrder({
+        id: values.id,
+        customerID: values.customerID,
+        employeeID: values.employeeID,
+        orderDate: values.orderDate,
+        paymentMethod: values.paymentMethod,
+        trackingNumber: values.trackingNumber,
+        status: values.status,
+      });
+      await updateOrderDetail({
+        orderID: values.id,
+        productID: values.productID,
+        amount: values.amount,
+        quantity: values.quantity,
+        discount: values.discount / 100,
+        profit: values.profit,
+        orderDate: values.orderDate
+      })
       setLoading(false);
       router.push("/orders");
     }, 300),
@@ -119,7 +154,7 @@ export default function EditOrderForm({ order }) {
               value={formik.values.customerID}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
+              className="h-10 p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
             >
               <option value="">Select a Customer</option>
               {customers.map((customer) => (
@@ -142,7 +177,7 @@ export default function EditOrderForm({ order }) {
               value={formik.values.employeeID}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
+              className="h-10 p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
             >
               <option value="">Select an Employee</option>
               {employees.map((employee) => (
@@ -235,34 +270,21 @@ export default function EditOrderForm({ order }) {
               value={formik.values.productID}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
+              className="h-10 p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
             >
               <option value="">Select a Product</option>
-              {products.map((product) => (
-                <option key={product.id} value={product.id}>
-                  {product.name}
+              {currentProducts.map((product) => (
+                <option
+                  key={product.productID}
+                  value={product.productID}
+                  disabled={product.stockCount <= 0} // Disable if stockCount is 0 or below
+                >
+                  {product.name} {product.stockCount <= 0 ? "(Out of stock)" : ""}
                 </option>
               ))}
             </select>
-            {formik.touched.employeeID && formik.errors.productID ? (
+            {formik.touched.productID && formik.errors.productID ? (
               <div className="error-message">{formik.errors.productID}</div>
-            ) : null}
-          </div>
-
-          {/* Amount Field */}
-          <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-            <label htmlFor="amount">Amount*</label>
-            <input
-              type="number"
-              name="amount"
-              id="amount"
-              value={formik.values.amount}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
-            />
-            {formik.touched.amount && formik.errors.amount ? (
-              <div className="error-message">{formik.errors.amount}</div>
             ) : null}
           </div>
 
@@ -285,7 +307,7 @@ export default function EditOrderForm({ order }) {
 
           {/* Discount Field */}
           <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-            <label htmlFor="discount">Discount*</label>
+            <label htmlFor="discount">Discount* (%)</label>
             <input
               type="number"
               name="discount"
@@ -297,23 +319,6 @@ export default function EditOrderForm({ order }) {
             />
             {formik.touched.discount && formik.errors.discount ? (
               <div className="error-message">{formik.errors.discount}</div>
-            ) : null}
-          </div>
-
-          {/* Profit Field */}
-          <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-            <label htmlFor="profit">Profit*</label>
-            <input
-              type="number"
-              name="profit"
-              id="profit"
-              value={formik.values.profit}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
-            />
-            {formik.touched.profit && formik.errors.profit ? (
-              <div className="error-message">{formik.errors.profit}</div>
             ) : null}
           </div>
 

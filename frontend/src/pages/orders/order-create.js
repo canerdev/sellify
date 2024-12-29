@@ -3,11 +3,12 @@ import { useFormik } from "formik";
 import { debounce } from "lodash";
 import * as Yup from "yup";
 import Layout from "../layout/Layout";
-import { createOrder, createOrderDetail } from "../api/orders";
+import { createOrder, createOrderDetail, getTrackingNumbers } from "../api/orders";
 import { useRouter } from "next/navigation";
 import { getAllCustomers } from "../api/customers";
 import { getAllUsers } from "../api/users";
 import { getAllProducts } from "../api/products";
+import { toast } from "react-toastify";
 
 export default function CreateOrderForm() {
   const [loading, setLoading] = useState(false);
@@ -15,18 +16,38 @@ export default function CreateOrderForm() {
   const [customers, setCustomers] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [products, setProducts] = useState([]);
+  const [trackingNumbers, setTrackingNumbers] = useState(new Set());
 
   useEffect(() => {
     async function fetchData() {
       const customers = await getAllCustomers();
       const employees = await getAllUsers();
       const products = await getAllProducts();
+      const trackingNumbers = await getTrackingNumbers();
+      setTrackingNumbers(trackingNumbers);
       setCustomers(customers);
       setEmployees(employees);
       setProducts(products);
     }
     fetchData();
   }, []);
+
+  const generateTrackingNumber = () => {
+    const randomDigits = (length) =>
+      Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+
+    let generatedNumber;
+    while (true) {
+      generatedNumber = `${randomDigits(4)}-${randomDigits(5)}`;
+      if (!trackingNumbers.has(generatedNumber)) {
+        break;
+      }
+    }
+    setTrackingNumbers(prevNumbers => new Set([...prevNumbers, generatedNumber]));
+    console.log(generatedNumber);
+    console.log(trackingNumbers);
+    return generatedNumber;
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -36,12 +57,10 @@ export default function CreateOrderForm() {
       orderDate: "",
       paymentMethod: "",
       trackingNumber: "",
-      status: "",
       productID: "",
-      amount: "",
       quantity: "",
       discount: "",
-      profit: "",
+      amount: "",
     },
     validationSchema: Yup.object({
       id: Yup.string()
@@ -56,47 +75,52 @@ export default function CreateOrderForm() {
       paymentMethod: Yup.string()
         .max(20, "Max 20 characters")
         .required("Paymet Method is required"),
-      trackingNumber: Yup.string()
-        .max(10, "Max 10 characters")
-        .required("Tracking Number is required"),
-      status: Yup.string()
-        .max(10, "Max 10 characters")
-        .required("Status is required"),
       productID: Yup.string()
         .min(1, "At least one product must be selected")
         .required("Product ID is required"),
-      amount: Yup.number().required("Amount is required"),
       quantity: Yup.number().required("Quantity is required"),
       discount: Yup.number().required("Discount is required"),
-      profit: Yup.number().required("Profit is required"),
     }),
 
     onSubmit: debounce(async (values, { resetForm }) => {
-      setLoading(true);
+      const selectedProduct = products.find((product) => product.id === values.productID);
       
-      const selectedProduct = products.find(product => product.id === values.productID);
-      const amount = selectedProduct ? values.quantity * parseFloat(selectedProduct.price) : 0;
+      // check if there are enough products in stock
+      if (values.quantity > selectedProduct.stockCount) {
+        toast.error(`Cannot order more than ${selectedProduct.stockCount} items of ${selectedProduct.name}.`, {
+            position: "bottom-right",
+            autoClose: 2000,
+          });
+        return;
+      }
 
+      const price = selectedProduct ? selectedProduct.price : 0;
+      const amount = values.quantity * price * (1 - values.discount / 100);
+      const profit = amount - (values.quantity * selectedProduct.cost);
+      values.amount = amount;
+      values.profit = profit;
+      
+      console.log(values);
+
+      setLoading(true);
       await createOrder({
         id: values.id,
         customerID: values.customerID,
         employeeID: values.employeeID,
         orderDate: values.orderDate,
         paymentMethod: values.paymentMethod,
-        status: values.status,
-        trackingNumber: values.trackingNumber,
+        trackingNumber: generateTrackingNumber(),
+        status: "active",
       });
-
       await createOrderDetail({
         orderID: values.id,
         productID: values.productID,
-        amount: amount,
+        amount: values.amount,
         quantity: values.quantity,
-        discount: values.discount,
+        discount: values.discount / 100,
         profit: values.profit,
-        orderDate: values.orderDate,
+        orderDate: values.orderDate
       });
-
       setLoading(false);
       router.push("/orders");
     }, 300),
@@ -134,7 +158,7 @@ export default function CreateOrderForm() {
             value={formik.values.customerID}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
+            className="h-10 p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
           >
             <option value="">Select a Customer</option>
             {customers.map((customer) => (
@@ -157,7 +181,7 @@ export default function CreateOrderForm() {
             value={formik.values.employeeID}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
+            className="h-10 p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
           >
             <option value="">Select an Employee</option>
             {employees.map((employee) => (
@@ -205,40 +229,6 @@ export default function CreateOrderForm() {
           )}
         </div>
 
-        {/* Tracking Number Field */}
-        <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-          <label htmlFor="trackingNumber">Tracking Number*</label>
-          <input
-            type="text"
-            name="trackingNumber"
-            id="trackingNumber"
-            value={formik.values.trackingNumber}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
-          />
-          {formik.touched.trackingNumber && formik.errors.trackingNumber && (
-            <div className="error-message">{formik.errors.trackingNumber}</div>
-          )}
-        </div>
-
-        {/* Status Field */}
-        <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-          <label htmlFor="status">Status*</label>
-          <input
-            type="text"
-            name="status"
-            id="status"
-            value={formik.values.status}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
-          />
-          {formik.touched.status && formik.errors.status && (
-            <div className="error-message">{formik.errors.status}</div>
-          )}
-        </div>
-
         {/* Product ID Field */}
         <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
           <label htmlFor="productID">Product*</label>
@@ -248,12 +238,16 @@ export default function CreateOrderForm() {
             value={formik.values.productID}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
+            className="h-10 p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
           >
             <option value="">Select a Product</option>
-            {products.map(product => (
-              <option key={product.id} value={product.id} disabled={product.stockCount <= 0}>
-                {product.name} {product.stockCount <= 0 ? '(Out of stock)' : ''}
+            {products.map((product) => (
+              <option
+                key={product.id}
+                value={product.id}
+                disabled={product.stockCount <= 0} // Disable if stockCount is 0 or below
+              >
+                {product.name} {product.stockCount <= 0 ? "(Out of stock)" : ""}
               </option>
             ))}
           </select>
@@ -272,7 +266,7 @@ export default function CreateOrderForm() {
             value={formik.values.quantity}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
+            className="h-10 p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
           />
           {formik.touched.quantity && formik.errors.quantity ? (
             <div className="error-message">{formik.errors.quantity}</div>
@@ -281,7 +275,7 @@ export default function CreateOrderForm() {
 
         {/* Discount Field */}
         <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-          <label htmlFor="discount">Discount*</label>
+          <label htmlFor="discount">Discount* (%)</label>
           <input
             type="number"
             name="discount"
@@ -293,23 +287,6 @@ export default function CreateOrderForm() {
           />
           {formik.touched.discount && formik.errors.discount ? (
             <div className="error-message">{formik.errors.discount}</div>
-          ) : null}
-        </div>
-
-        {/* Profit Field */}
-        <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-          <label htmlFor="profit">Profit*</label>
-          <input
-            type="number"
-            name="profit"
-            id="profit"
-            value={formik.values.profit}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
-          />
-          {formik.touched.profit && formik.errors.profit ? (
-            <div className="error-message">{formik.errors.profit}</div>
           ) : null}
         </div>
 
