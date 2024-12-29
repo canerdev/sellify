@@ -3,7 +3,11 @@ import { useFormik } from "formik";
 import { debounce } from "lodash";
 import * as Yup from "yup";
 import Layout from "../layout/Layout";
-import { createOrder, createOrderDetail, getTrackingNumbers } from "../api/orders";
+import {
+  createOrder,
+  createOrderDetail,
+  getTrackingNumbers,
+} from "../api/orders";
 import { useRouter } from "next/navigation";
 import { getAllCustomers } from "../api/customers";
 import { getAllUsers } from "../api/users";
@@ -34,7 +38,7 @@ export default function CreateOrderForm() {
 
   const generateTrackingNumber = () => {
     const randomDigits = (length) =>
-      Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+      Array.from({ length }, () => Math.floor(Math.random() * 10)).join("");
 
     let generatedNumber;
     while (true) {
@@ -43,9 +47,9 @@ export default function CreateOrderForm() {
         break;
       }
     }
-    setTrackingNumbers(prevNumbers => new Set([...prevNumbers, generatedNumber]));
-    console.log(generatedNumber);
-    console.log(trackingNumbers);
+    setTrackingNumbers(
+      (prevNumbers) => new Set([...prevNumbers, generatedNumber])
+    );
     return generatedNumber;
   };
 
@@ -79,28 +83,39 @@ export default function CreateOrderForm() {
         .min(1, "At least one product must be selected")
         .required("Product ID is required"),
       quantity: Yup.number().required("Quantity is required"),
-      discount: Yup.number().required("Discount is required"),
+      discount: Yup.number()
+        .required("Discount is required")
+        .min(0, "Discount must be at least 0 (0%)")
+        .max(1, "Discount must be at most 1 (100%)")
+        .test(
+          "is-decimal",
+          "Discount must be a valid percentage (e.g., 0.10, 0.20)",
+          (value) => value === undefined || (value * 100) % 1 === 0
+        ),
     }),
 
     onSubmit: debounce(async (values, { resetForm }) => {
-      const selectedProduct = products.find((product) => product.id === values.productID);
-      
+      const selectedProduct = products.find(
+        (product) => product.id === values.productID
+      );
+
       // check if there are enough products in stock
       if (values.quantity > selectedProduct.stockCount) {
-        toast.error(`Cannot order more than ${selectedProduct.stockCount} items of ${selectedProduct.name}.`, {
+        toast.error(
+          `Cannot order more than ${selectedProduct.stockCount} items of ${selectedProduct.name}.`,
+          {
             position: "bottom-right",
             autoClose: 2000,
-          });
+          }
+        );
         return;
       }
 
       const price = selectedProduct ? selectedProduct.price : 0;
-      const amount = values.quantity * price * (1 - values.discount / 100);
-      const profit = amount - (values.quantity * selectedProduct.cost);
+      const amount = values.quantity * price * (1 - values.discount);
+      const profit = amount - values.quantity * selectedProduct.cost;
       values.amount = amount;
       values.profit = profit;
-      
-      console.log(values);
 
       setLoading(true);
       await createOrder({
@@ -117,9 +132,9 @@ export default function CreateOrderForm() {
         productID: values.productID,
         amount: values.amount,
         quantity: values.quantity,
-        discount: values.discount / 100,
+        discount: values.discount,
         profit: values.profit,
-        orderDate: values.orderDate
+        orderDate: values.orderDate,
       });
       setLoading(false);
       router.push("/orders");
@@ -275,7 +290,7 @@ export default function CreateOrderForm() {
 
         {/* Discount Field */}
         <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-          <label htmlFor="discount">Discount* (%)</label>
+          <label htmlFor="discount">Discount*</label>
           <input
             type="number"
             name="discount"

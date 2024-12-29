@@ -1224,15 +1224,33 @@ def get_order_details_by_filter():
         connection.close()
 
 # UPDATE ORDER DETAIL
-@app.route('/api/order-details/<string:orderID>', methods=['PUT'])
-def update_order_detail(orderID):
+@app.route('/api/order-details/<int:id>', methods=['PUT'])
+def update_order_detail(id):
     data = request.json
-    query = 'UPDATE orderDetails SET productID = %s, amount = %s, quantity = %s, discount = %s, profit = %s WHERE orderID = %s AND productID = %s'
-    values = (data['productID'], data['amount'], data['quantity'], data['discount'], data['profit'], orderID, data['productID'])
+    product_id = data['productID']
+    new_quantity = data['quantity']
+
+    current_quantity_query = 'SELECT quantity FROM orderDetails WHERE id = %s'
+    query = 'UPDATE orderDetails SET productID = %s, amount = %s, quantity = %s, discount = %s, profit = %s WHERE id = %s'
+    values = (data['productID'], data['amount'], data['quantity'], data['discount'], data['profit'], id)
 
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
+            cursor.execute(current_quantity_query, id)
+            current_quantity = cursor.fetchone()
+            if not current_quantity:
+                return jsonify({'error': 'Order detail not found'}), 404
+            
+            cur_qu = current_quantity['quantity']
+            if cur_qu > new_quantity:
+                diff = cur_qu - new_quantity
+                cursor.execute('UPDATE products SET stockCount = stockCount + %s WHERE id = %s', (diff, product_id))
+            elif cur_qu < new_quantity:
+                diff = new_quantity - cur_qu
+                cursor.execute('UPDATE products SET stockCount = stockCount - %s WHERE id = %s', (diff, product_id))
+
+
             cursor.execute(query, values)
             connection.commit()
         return jsonify({'message': 'Order detail updated successfully!'}), 200

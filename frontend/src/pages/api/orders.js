@@ -95,13 +95,16 @@ export async function updateOrder(data) {
 
 export async function updateOrderDetail(data) {
   try {
-    const res = await fetch(`http://localhost:8080/api/order-details/${data.orderID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    const res = await fetch(
+      `http://localhost:8080/api/order-details/${data.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
 
     if (res.ok) {
       toast.success("Order detail updated successfully", {
@@ -225,7 +228,9 @@ export async function getOrderById(id) {
 }
 
 export async function getCurrentProducts(orderID) {
-  const res = await fetch(`http://localhost:8080/api/products/current-order/${orderID}`);
+  const res = await fetch(
+    `http://localhost:8080/api/products/current-order/${orderID}`
+  );
   if (!res.ok) {
     throw new Error("Failed to fetch data from the server");
   }
@@ -240,5 +245,5 @@ export async function getTrackingNumbers() {
     throw new Error("Failed to fetch data from the server");
   }
   const data = await res.json();
-  return new Set(data.map(item => item.trackingNumber));
+  return new Set(data.map((item) => item.trackingNumber));
 }

@@ -3,11 +3,15 @@ import { useFormik } from "formik";
 import { debounce } from "lodash";
 import * as Yup from "yup";
 import Layout from "@/pages/layout/Layout";
-import { updateOrder, getOrderById, updateOrderDetail, getCurrentProducts } from "@/pages/api/orders";
+import {
+  updateOrder,
+  getOrderById,
+  updateOrderDetail,
+  getCurrentProducts,
+} from "@/pages/api/orders";
 import { useRouter } from "next/navigation";
 import { getAllCustomers } from "@/pages/api/customers";
 import { getAllUsers } from "@/pages/api/users";
-import { getAllProducts } from "@/pages/api/products";
 import Loading from "@/pages/loading";
 import { toast } from "react-toastify";
 
@@ -19,7 +23,20 @@ export default function EditOrderForm({ order }) {
   const [currentProducts, setCurrentProducts] = useState([]);
   const [initialValues, setInitialValues] = useState(order);
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  };
+
   useEffect(() => {
+    if (order) {
+      setInitialValues({
+        ...order,
+        orderDate: formatDate(order.orderDate),
+      });
+    }
+
     async function fetchData() {
       const customers = await getAllCustomers();
       const employees = await getAllUsers();
@@ -71,29 +88,40 @@ export default function EditOrderForm({ order }) {
         .min(1, "At least one product must be selected")
         .required("Product ID is required"),
       quantity: Yup.number().required("Quantity is required"),
-      discount: Yup.number().required("Discount is required"),
+      discount: Yup.number()
+        .required("Discount is required")
+        .min(0, "Discount must be at least 0 (0%)")
+        .max(1, "Discount must be at most 1 (100%)")
+        .test(
+          "is-decimal",
+          "Discount must be a valid percentage (e.g., 0.10, 0.20)",
+          (value) => value === undefined || (value * 100) % 1 === 0
+        ),
     }),
 
     onSubmit: debounce(async (values, { resetForm }) => {
-      console.log(currentProducts);
-      const selectedProduct = currentProducts.find((product) => product.productID === values.productID);
-      console.log(selectedProduct);
+      const selectedProduct = currentProducts.find(
+        (product) => product.productID === values.productID
+      );
 
       // check if there are enough products in stock
       if (values.quantity > selectedProduct.stockCount) {
-        toast.error(`Cannot order more than ${selectedProduct.stockCount} items of ${selectedProduct.name}.`, {
-          position: "bottom-right",
-          autoClose: 2000,
-        });
+        toast.error(
+          `Cannot order more than ${selectedProduct.stockCount} items of ${selectedProduct.name}.`,
+          {
+            position: "bottom-right",
+            autoClose: 2000,
+          }
+        );
         return;
       }
-      
+
       const price = selectedProduct ? selectedProduct.price : 0;
-      const amount = values.quantity * price * (1 - values.discount / 100);
-      const profit = amount - (values.quantity * selectedProduct.cost);
+      const amount = values.quantity * price * (1 - values.discount);
+      const profit = amount - values.quantity * selectedProduct.cost;
       values.amount = amount;
       values.profit = profit;
-      
+
       setLoading(true);
       await updateOrder({
         id: values.id,
@@ -105,18 +133,35 @@ export default function EditOrderForm({ order }) {
         status: values.status,
       });
       await updateOrderDetail({
+        id: initialValues.details[0].id,
         orderID: values.id,
         productID: values.productID,
         amount: values.amount,
         quantity: values.quantity,
-        discount: values.discount / 100,
+        discount: values.discount,
         profit: values.profit,
-        orderDate: values.orderDate
-      })
+        orderDate: values.orderDate,
+      });
       setLoading(false);
       router.push("/orders");
     }, 300),
   });
+
+  useEffect(() => {
+    if (formik.values.productID) {
+      const selectedDetail = order.details.find(
+        (detail) => detail.productID === formik.values.productID
+      );
+
+      if (selectedDetail) {
+        formik.setFieldValue("discount", selectedDetail.discount || 0);
+        formik.setFieldValue("quantity", selectedDetail.quantity || 1);
+      } else {
+        formik.setFieldValue("discount", 0);
+        formik.setFieldValue("quantity", 1);
+      }
+    }
+  }, [formik.values.productID, order.details]);
 
   if (!initialValues) {
     return <Loading />;
@@ -279,7 +324,8 @@ export default function EditOrderForm({ order }) {
                   value={product.productID}
                   disabled={product.stockCount <= 0} // Disable if stockCount is 0 or below
                 >
-                  {product.name} {product.stockCount <= 0 ? "(Out of stock)" : ""}
+                  {product.name}{" "}
+                  {product.stockCount <= 0 ? "(Out of stock)" : ""}
                 </option>
               ))}
             </select>
@@ -307,7 +353,7 @@ export default function EditOrderForm({ order }) {
 
           {/* Discount Field */}
           <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-            <label htmlFor="discount">Discount* (%)</label>
+            <label htmlFor="discount">Discount*</label>
             <input
               type="number"
               name="discount"

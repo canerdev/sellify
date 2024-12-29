@@ -3,7 +3,7 @@
 import Layout from "../layout/Layout";
 import {
   deleteShippingDetail,
-  getAllShippingDetails
+  getAllShippingDetails,
 } from "../api/shippingDetails";
 import IndexTable from "@/components/IndexTable";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
@@ -64,8 +64,6 @@ export default function ShippingDetails() {
 
     fetchShippingDetails();
   }, [deleted, added]);
-
-  console.log(shippingDetails);
 
   const headers = [
     "Order ID",

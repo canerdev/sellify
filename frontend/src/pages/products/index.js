@@ -1,10 +1,7 @@
 "use client";
 
 import Layout from "../layout/Layout";
-import {
-  deleteProduct,
-  getAllProducts
-} from "../api/products";
+import { deleteProduct, getAllProducts } from "../api/products";
 import IndexTable from "@/components/IndexTable";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useEffect, useState } from "react";
@@ -64,10 +61,8 @@ export default function Products() {
     fetchProducts();
   }, [deleted, added]);
 
-  console.log(products);
-
-  const headers = ["ID", "Name", "Price", "Cost" , "Category", "Stock"];
-  const columns = ["id", "name", "price", "cost" , "categoryID", "stockCount"];
+  const headers = ["ID", "Name", "Price", "Cost", "Category", "Stock"];
+  const columns = ["id", "name", "price", "cost", "categoryID", "stockCount"];
 
   if (isLoading) {
     return <Loading />;
