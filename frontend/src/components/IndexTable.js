@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import Paper from '@mui/material/Paper';
+import * as React from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import Paper from "@mui/material/Paper";
 import { FaEdit, FaEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function IndexTable({
   headers,
@@ -15,7 +15,6 @@ export default function IndexTable({
   createPath,
   onEdit,
 }) {
-
   const dataGridColumns = columns.map((column, index) => ({
     field: column,
     headerName: headers[index],
@@ -23,8 +22,8 @@ export default function IndexTable({
   }));
 
   dataGridColumns.push({
-    field: 'actions',
-    headerName: 'Actions',
+    field: "actions",
+    headerName: "Actions",
     sortable: false,
     width: 160,
     renderCell: (params) => (
@@ -91,11 +90,11 @@ export default function IndexTable({
           </Link>
         </div>
       </div>
-      <Paper sx={{ height: 500, width: '100%' }}>
+      <Paper sx={{ height: 500, width: "100%", bgcolor: "#080b14" }}>
         <DataGrid
           rows={items}
           columns={dataGridColumns}
-          initialState={{ pagination: {paginationModel} }}
+          initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[5, 10, 25, 50, 100]}
           checkboxSelection
           pagination
@@ -108,56 +107,56 @@ export default function IndexTable({
           }}
           sx={{
             border: 0,
-            '& .MuiDataGrid-cell': {
-              color: 'white',
-              backgroundColor: '#080b14',
+            "& .MuiDataGrid-cell": {
+              color: "white",
+              backgroundColor: "#080b14",
             },
-            '& .MuiDataGrid-row': {
-              transition: 'background-color 0.2s ease',
-              '&:hover': {
-                backgroundColor: '#1f2937',
+            "& .MuiDataGrid-row": {
+              transition: "background-color 0.2s ease",
+              "&:hover": {
+                backgroundColor: "#1f2937",
               },
-              '&.Mui-selected': {
-                backgroundColor: '#1a2235',
-                '&:hover': {
-                  backgroundColor: '#243145', 
+              "&.Mui-selected": {
+                backgroundColor: "#1a2235",
+                "&:hover": {
+                  backgroundColor: "#243145",
                 },
               },
             },
-            '& .MuiDataGrid-columnHeader': {
-              color: 'white',
-              backgroundColor: '#0f1420',
+            "& .MuiDataGrid-columnHeader": {
+              color: "white",
+              backgroundColor: "#0f1420",
             },
-            '& .MuiDataGrid-sortIcon': {
-              color: 'white !important', 
+            "& .MuiDataGrid-sortIcon": {
+              color: "white !important",
             },
-            '& .MuiCheckbox-root': {
-              color: 'white !important',
+            "& .MuiCheckbox-root": {
+              color: "white !important",
             },
-            '& .MuiDataGrid-menuIconButton': {
+            "& .MuiDataGrid-menuIconButton": {
               opacity: 1,
-              color: '#4d5e63',
+              color: "#4d5e63",
             },
-            '& .MuiDataGrid-footerContainer': {
-              backgroundColor: '#080b14',
-              color: 'white',
-              '& .MuiTablePagination-root': {
-                color: 'white',
+            "& .MuiDataGrid-footerContainer": {
+              backgroundColor: "#080b14",
+              color: "white",
+              "& .MuiTablePagination-root": {
+                color: "white",
               },
-              '& .MuiTablePagination-selectLabel': {
-                color: 'white',
+              "& .MuiTablePagination-selectLabel": {
+                color: "white",
               },
-              '& .MuiTablePagination-displayedRows': {
-                color: 'white',
+              "& .MuiTablePagination-displayedRows": {
+                color: "white",
               },
-              '& .MuiTablePagination-select': {
-                color: 'white',
+              "& .MuiTablePagination-select": {
+                color: "white",
               },
-              '& .MuiTablePagination-selectIcon': {
-                color: 'white',
+              "& .MuiTablePagination-selectIcon": {
+                color: "white",
               },
-              '& .MuiIconButton-root': {
-                color: 'white',
+              "& .MuiIconButton-root": {
+                color: "white",
               },
             },
           }}
