@@ -38,6 +38,7 @@ export default function CreateProductForm() {
       name: Yup.string()
         .max(255, "Max 255 characters")
         .required("Name is required"),
+      cost: Yup.number().required("Cost is required"),
       price: Yup.number().required("Price is required"),
       categoryID: Yup.number().required("Category ID is required"),
       stockCount: Yup.number().required("Stock count is required"),
@@ -87,6 +88,21 @@ export default function CreateProductForm() {
             <div>
               <div className="error-message">{formik.errors.name} </div>
             </div>
+          ) : null}
+        </div>
+        <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
+          <label htmlFor="cost">Cost*</label>
+          <input
+            type="number"
+            name="cost"
+            id="cost"
+            value={formik.values.cost}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
+          />
+          {formik.touched.cost && formik.errors.cost ? (
+            <div className="error-message">{formik.errors.cost} </div>
           ) : null}
         </div>
         <div className="flex flex-col w-full md:w-[calc(50%-12px)]">

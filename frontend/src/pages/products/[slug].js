@@ -50,6 +50,12 @@ export default function Product({ product }) {
                 </td>
               </tr>
               <tr className="border-b border-gray-700">
+                <th className="py-2 px-4 text-gray-400 font-medium">Cost</th>
+                <td className="py-2 px-4 text-gray-200">
+                  {product?.cost || "-"}
+                </td>
+              </tr>
+              <tr className="border-b border-gray-700">
                 <th className="py-2 px-4 text-gray-400 font-medium">Price</th>
                 <td className="py-2 px-4 text-gray-200">
                   {Number(product?.price).toFixed(2) || "-"}
