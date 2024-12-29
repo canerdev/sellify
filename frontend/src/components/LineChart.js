@@ -43,7 +43,11 @@ const LineChart = ({ data, xField, yField, caption, w, h }) => {
 
     const line = d3
       .line()
-      .x((d, i) => (i / (data.length - 1)) * (width - margin.left - margin.right) + margin.left)
+      .x(
+        (d, i) =>
+          (i / (data.length - 1)) * (width - margin.left - margin.right) +
+          margin.left
+      )
       .y((d) => y(d[yField]))
       .curve(d3.curveMonotoneX);
 
@@ -62,7 +66,12 @@ const LineChart = ({ data, xField, yField, caption, w, h }) => {
       .selectAll("circle")
       .data(data)
       .join("circle")
-      .attr("cx", (d, i) => (i / (data.length - 1)) * (width - margin.left - margin.right) + margin.left)
+      .attr(
+        "cx",
+        (d, i) =>
+          (i / (data.length - 1)) * (width - margin.left - margin.right) +
+          margin.left
+      )
       .attr("cy", (d) => y(d[yField]))
       .attr("r", 5)
       .attr("fill", "deepskyblue")
@@ -94,13 +103,14 @@ const LineChart = ({ data, xField, yField, caption, w, h }) => {
       .append("g")
       .call(d3.axisLeft(y))
       .attr("transform", `translate(${margin.left},0)`)
-      .style("font-weight", "bold");
+      .style("font-weight", "bold")
+      .style("color", "white");
 
     if (caption) {
       svg
         .append("text")
         .attr("x", width / 2)
-        .attr("y", margin.top) 
+        .attr("y", margin.top)
         .attr("text-anchor", "middle")
         .attr("font-size", "18px")
         .attr("fill", "white")

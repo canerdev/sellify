@@ -1,7 +1,15 @@
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
-const BarChart = ({ data, xField, yField, caption, w, h, showXLabels = true }) => {
+const BarChart = ({
+  data,
+  xField,
+  yField,
+  caption,
+  w,
+  h,
+  showXLabels = true,
+}) => {
   const ref = useRef();
 
   useEffect(() => {
@@ -13,7 +21,7 @@ const BarChart = ({ data, xField, yField, caption, w, h, showXLabels = true }) =
     const margin = { top: 20, right: 30, bottom: 30, left: 40 };
 
     svg.attr("width", width).attr("height", height);
-    
+
     const yMax = d3.max(data, (item) => item[yField]) * 1.25;
 
     const x = d3
@@ -71,7 +79,8 @@ const BarChart = ({ data, xField, yField, caption, w, h, showXLabels = true }) =
       .append("g")
       .call(d3.axisLeft(y))
       .attr("transform", `translate(${margin.left},0)`)
-      .style("font-weight", "bold");
+      .style("font-weight", "bold")
+      .style("color", "white");
 
     if (showXLabels) {
       svg
@@ -79,7 +88,8 @@ const BarChart = ({ data, xField, yField, caption, w, h, showXLabels = true }) =
         .call(d3.axisBottom(x))
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .style("font-weight", "bold")
-        .style("font-size", "14px");
+        .style("font-size", "14px")
+        .style("color", "white");
     }
 
     if (caption) {
