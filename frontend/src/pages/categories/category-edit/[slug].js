@@ -24,7 +24,7 @@ export default function EditCategoryForm({ category }) {
         .max(50, "Max 50 characters")
         .required("Name is required"),
       description: Yup.string(),
-      status: Yup.boolean().required("Status is required"),
+      status: Yup.boolean(),
     }),
 
     onSubmit: debounce(async (values, { resetForm }) => {

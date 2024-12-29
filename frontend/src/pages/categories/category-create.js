@@ -14,14 +14,14 @@ export default function CreateCategoryForm() {
     initialValues: {
       name: "",
       description: "",
-      status: "",
+      status: 0,
     },
     validationSchema: Yup.object({
       name: Yup.string()
         .max(50, "Max 50 characters")
         .required("Name is required"),
       description: Yup.string(),
-      status: Yup.boolean().required("Status is required"),
+      status: Yup.boolean(),
     }),
 
     onSubmit: debounce(async (values, { resetForm }) => {
