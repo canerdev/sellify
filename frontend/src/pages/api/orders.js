@@ -93,6 +93,37 @@ export async function updateOrder(data) {
   }
 }
 
+export async function updateOrderDetail(data) {
+  try {
+    const res = await fetch(`http://localhost:8080/api/order-details/${data.orderID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      toast.success("Order detail updated successfully", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        dangerouslySetInnerHTML: true,
+      });
+    }
+  } catch (error) {
+    toast.error(`Failed to update order detail: ${error.message}`, {
+      position: "bottom-right",
+      autoClose: 2000,
+    });
+  }
+}
+
 export async function getAllOrders() {
   const res = await fetch("http://localhost:8080/api/orders");
   if (!res.ok) {
@@ -191,4 +222,23 @@ export async function getOrderById(id) {
     console.error(error);
     throw new Error("Error fetching order and order details");
   }
+}
+
+export async function getCurrentProducts(orderID) {
+  const res = await fetch(`http://localhost:8080/api/products/current-order/${orderID}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch data from the server");
+  }
+  return await res.json();
+}
+
+export async function getTrackingNumbers() {
+  const res = await fetch("http://localhost:8080/api/orders/tracking-numbers");
+  if (!res.ok) {
+    console.error("Failed to fetch tracking numbers from the server");
+    console.error(res);
+    throw new Error("Failed to fetch data from the server");
+  }
+  const data = await res.json();
+  return new Set(data.map(item => item.trackingNumber));
 }

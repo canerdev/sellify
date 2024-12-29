@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import { debounce } from "lodash";
 import * as Yup from "yup";
 import Layout from "../layout/Layout";
-import { createOrder, createOrderDetail } from "../api/orders";
+import { createOrder, createOrderDetail, getTrackingNumbers } from "../api/orders";
 import { useRouter } from "next/navigation";
 import { getAllCustomers } from "../api/customers";
 import { getAllUsers } from "../api/users";
@@ -16,18 +16,38 @@ export default function CreateOrderForm() {
   const [customers, setCustomers] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [products, setProducts] = useState([]);
+  const [trackingNumbers, setTrackingNumbers] = useState(new Set());
 
   useEffect(() => {
     async function fetchData() {
       const customers = await getAllCustomers();
       const employees = await getAllUsers();
       const products = await getAllProducts();
+      const trackingNumbers = await getTrackingNumbers();
+      setTrackingNumbers(trackingNumbers);
       setCustomers(customers);
       setEmployees(employees);
       setProducts(products);
     }
     fetchData();
   }, []);
+
+  const generateTrackingNumber = () => {
+    const randomDigits = (length) =>
+      Array.from({ length }, () => Math.floor(Math.random() * 10)).join('');
+
+    let generatedNumber;
+    while (true) {
+      generatedNumber = `${randomDigits(4)}-${randomDigits(5)}`;
+      if (!trackingNumbers.has(generatedNumber)) {
+        break;
+      }
+    }
+    setTrackingNumbers(prevNumbers => new Set([...prevNumbers, generatedNumber]));
+    console.log(generatedNumber);
+    console.log(trackingNumbers);
+    return generatedNumber;
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -55,9 +75,6 @@ export default function CreateOrderForm() {
       paymentMethod: Yup.string()
         .max(20, "Max 20 characters")
         .required("Paymet Method is required"),
-      trackingNumber: Yup.string()
-        .max(10, "Max 10 characters")
-        .required("Tracking Number is required"),
       productID: Yup.string()
         .min(1, "At least one product must be selected")
         .required("Product ID is required"),
@@ -67,7 +84,7 @@ export default function CreateOrderForm() {
 
     onSubmit: debounce(async (values, { resetForm }) => {
       const selectedProduct = products.find((product) => product.id === values.productID);
-
+      
       // check if there are enough products in stock
       if (values.quantity > selectedProduct.stockCount) {
         toast.error(`Cannot order more than ${selectedProduct.stockCount} items of ${selectedProduct.name}.`, {
@@ -82,6 +99,8 @@ export default function CreateOrderForm() {
       const profit = amount - (values.quantity * selectedProduct.cost);
       values.amount = amount;
       values.profit = profit;
+      
+      console.log(values);
 
       setLoading(true);
       await createOrder({
@@ -90,7 +109,7 @@ export default function CreateOrderForm() {
         employeeID: values.employeeID,
         orderDate: values.orderDate,
         paymentMethod: values.paymentMethod,
-        trackingNumber: values.trackingNumber,
+        trackingNumber: generateTrackingNumber(),
         status: "active",
       });
       await createOrderDetail({
@@ -207,23 +226,6 @@ export default function CreateOrderForm() {
           />
           {formik.touched.paymentMethod && formik.errors.paymentMethod && (
             <div className="error-message">{formik.errors.paymentMethod}</div>
-          )}
-        </div>
-
-        {/* Tracking Number Field */}
-        <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-          <label htmlFor="trackingNumber">Tracking Number*</label>
-          <input
-            type="text"
-            name="trackingNumber"
-            id="trackingNumber"
-            value={formik.values.trackingNumber}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
-          />
-          {formik.touched.trackingNumber && formik.errors.trackingNumber && (
-            <div className="error-message">{formik.errors.trackingNumber}</div>
           )}
         </div>
 
