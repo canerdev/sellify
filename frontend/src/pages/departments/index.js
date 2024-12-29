@@ -5,6 +5,7 @@ import {
   getNumberOfDepartments,
   getDepartmentsWithFilter,
   deleteDepartment,
+  getAllDepartments
 } from "../api/departments";
 import IndexTable from "@/components/IndexTable";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
@@ -13,12 +14,8 @@ import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Departments() {
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
-  const [count, setCount] = useState(0);
   const [departments, setDepartments] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -60,9 +57,7 @@ export default function Departments() {
   useEffect(() => {
     async function fetchDepartments() {
       setIsLoading(true);
-      const departments = await getDepartmentsWithFilter(offset, limit);
-      const departmentsCount = await getNumberOfDepartments();
-      setCount(departmentsCount.count);
+      const departments = await getAllDepartments();
       setDepartments(departments);
       setIsLoading(false);
       setDeleted(false);
@@ -70,7 +65,7 @@ export default function Departments() {
     }
 
     fetchDepartments();
-  }, [offset, limit, currentPage, deleted, added]);
+  }, [deleted, added]);
 
   const headers = ["ID", "Name", "Employee Count"];
   const columns = ["id", "name", "employeeCount"];
@@ -89,12 +84,7 @@ export default function Departments() {
             headers={headers}
             items={departments}
             columns={columns}
-            count={count}
             description={"Departments Table"}
-            limit={limit}
-            setOffset={setOffset}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
             tableName="departments"

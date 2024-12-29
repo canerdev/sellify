@@ -1,49 +1,82 @@
+import * as React from 'react';
+import { DataGrid } from '@mui/x-data-grid';
+import Paper from '@mui/material/Paper';
 import { FaEdit, FaEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function IndexTable({
   headers,
   items,
   columns,
   description,
-  count,
-  limit,
-  setOffset,
-  currentPage,
-  setCurrentPage,
   onDelete,
   onView,
   createPath,
   onEdit,
 }) {
-  const totalPages = Math.ceil(count / limit);
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setOffset((prevOffset) => {
-        return prevOffset + limit;
-      });
-      setCurrentPage((prevPage) => {
-        return prevPage + 1;
-      });
-    }
-  };
+  const dataGridColumns = columns.map((column, index) => ({
+    field: column,
+    headerName: headers[index],
+    flex: 1, // Use flex to allow columns to fill available space
+  }));
 
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setOffset((prevOffset) => {
-        return prevOffset - limit;
-      });
-      setCurrentPage((prevPage) => {
-        return prevPage - 1;
-      });
-    }
-  };
+  dataGridColumns.push({
+    field: 'actions',
+    headerName: 'Actions',
+    sortable: false,
+    width: 160,
+    renderCell: (params) => (
+      <div className="flex items-center space-x-2">
+        <button
+          onClick={() => {
+            if (description == "Shipping Details Table") {
+              onEdit(params.row.orderID);
+            } else {
+              onEdit(params.row.id);
+            }
+          }}
+          className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
+          aria-label="Edit"
+        >
+          <FaEdit className="w-5 h-5" />
+        </button>
+        <button
+          onClick={() => {
+            if (description == "Shipping Details Table") {
+              onView(params.row.orderID);
+            } else {
+              onView(params.row.id);
+            }
+          }}
+          className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
+          aria-label="View"
+        >
+          <FaEye className="w-5 h-5" />
+        </button>
+        <button
+          onClick={() => {
+            if (description == "Shipping Details Table") {
+              onDelete(params.row.orderID);
+            } else {
+              onDelete(params.row.id);
+            }
+          }}
+          className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
+          aria-label="Delete"
+        >
+          <MdDelete className="w-5 h-5" />
+        </button>
+      </div>
+    ),
+  });
+
+  const paginationModel = { page: 0, pageSize: 25 };
 
   return (
-    <div className="max-w-screen-xl mx-auto px-4 md:px-8 py-4">
-      <div className="items-start justify-between md:flex">
+    <div className="max-w-screen-xl mx-auto px-4 md:px-8 py-4 text-gray-200">
+      <div className="items-start justify-between md:flex pb-6">
         <div className="max-w-lg">
           <h2 className="text-gray-200 text-2xl font-bold mt-2">
             {description || "Index Table"}
@@ -58,108 +91,80 @@ export default function IndexTable({
           </Link>
         </div>
       </div>
-      <div className="mt-12 shadow-sm border rounded-lg overflow-x-auto">
-        <table className="w-full table-auto text-sm text-center">
-          <thead className="bg-gray-50 text-gray-600 font-medium border-b">
-            <tr>
-              {headers.map((header, index) => (
-                <th key={index} className="py-3 text-center px-2">
-                  {header}
-                </th>
-              ))}
-              <th className="py-3 px-2"></th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-200 divide-y">
-            {items.map((item, idx) => (
-              <tr key={idx}>
-                {columns.map((column, index) => (
-                  <td
-                    key={index}
-                    className="px-2 text-center py-4 whitespace-nowrap"
-                  >
-                    {item[column] || "-"}
-                  </td>
-                ))}
-                <td className="text-center px-6 whitespace-nowrap">
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => {
-                        if (description == "Shipping Details Table") {
-                          onEdit(item.orderID);
-                        } else {
-                          onEdit(item.id);
-                        }
-                      }}
-                      className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
-                      aria-label="Edit"
-                    >
-                      <FaEdit className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (description == "Shipping Details Table") {
-                          onView(item.orderID);
-                        } else {
-                          onView(item.id);
-                        }
-                      }}
-                      className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
-                      aria-label="View"
-                    >
-                      <FaEye className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (description == "Shipping Details Table") {
-                          onDelete(item.orderID);
-                        } else {
-                          onDelete(item.id);
-                        }
-                      }}
-                      className="flex items-center justify-center w-8 h-8 text-gray-600 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition duration-150"
-                      aria-label="Delete"
-                    >
-                      <MdDelete className="w-5 h-5" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-      <div className="mt-4 flex justify-between items-center">
-        <button
-          onClick={handlePreviousPage}
-          disabled={currentPage === 1}
-          className={`px-4 py-2 text-sm font-medium rounded-lg border ${
-            currentPage === 1
-              ? "text-gray-400 bg-gray-200 cursor-not-allowed"
-              : "text-gray-300 bg-gray-800 hover:bg-gray-600"
-          }`}
-        >
-          Previous
-        </button>
-
-        <span className="text-sm font-medium text-gray-400">
-          Page {currentPage} of {totalPages}
-        </span>
-
-        <button
-          onClick={handleNextPage}
-          disabled={currentPage === totalPages}
-          className={`px-4 py-2 text-sm font-medium rounded-lg border ${
-            currentPage === totalPages
-              ? "text-gray-400 bg-gray-200 cursor-not-allowed"
-              : "text-gray-300 bg-gray-800 hover:bg-gray-600"
-          }`}
-        >
-          Next
-        </button>
-      </div>
+      <Paper sx={{ height: 500, width: '100%' }}>
+        <DataGrid
+          rows={items}
+          columns={dataGridColumns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[5, 10, 25, 50]}
+          checkboxSelection
+          pagination
+          getRowId={(row) => {
+            if (description == "Shipping Details Table") {
+              return row.orderID;
+            } else {
+              return row.id;
+            }
+          }}
+          sx={{
+            border: 0,
+            '& .MuiDataGrid-cell': {
+              color: 'white',
+              backgroundColor: '#080b14',
+            },
+            '& .MuiDataGrid-row': {
+              transition: 'background-color 0.2s ease',
+              '&:hover': {
+                backgroundColor: '#1f2937', // Hover effect
+              },
+              '&.Mui-selected': {
+                backgroundColor: '#1a2235', // Selected row color
+                '&:hover': {
+                  backgroundColor: '#243145', // Selected row hover color
+                },
+              },
+            },
+            '& .MuiDataGrid-columnHeader': {
+              color: 'white',
+              backgroundColor: '#0f1420',
+            },
+            '& .MuiDataGrid-sortIcon': {
+              color: 'white !important', // Ensure sorting icons are visible
+            },
+            '& .MuiCheckbox-root': {
+              color: 'white !important',
+            },
+            '& .MuiDataGrid-virtualScroller': {
+              backgroundColor: '#080b14',
+            },
+            '& .MuiDataGrid-menuIcon': {
+              color: 'white !important', // Fix for the three dots
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: '#080b14',
+              color: 'white',
+              '& .MuiTablePagination-root': {
+                color: 'white',
+              },
+              '& .MuiTablePagination-selectLabel': {
+                color: 'white',
+              },
+              '& .MuiTablePagination-displayedRows': {
+                color: 'white',
+              },
+              '& .MuiTablePagination-select': {
+                color: 'white',
+              },
+              '& .MuiTablePagination-selectIcon': {
+                color: 'white',
+              },
+              '& .MuiIconButton-root': {
+                color: 'white',
+              },
+            },
+          }}
+        />
+      </Paper>
     </div>
   );
 }

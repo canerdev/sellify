@@ -1114,16 +1114,19 @@ def create_order_detail():
     data = request.json
     
     query_insert = 'INSERT INTO orderDetails (orderID, productID, amount, quantity, discount, profit) VALUES (%s, %s, %s, %s, %s, %s)'
-    query_update = 'ÚPDATE products SET stockCount = stockCount - %s WHERE id = %s'
+    update_stock = 'UPDATE products SET stockCount = stockCount - %s WHERE id = %s'
+    update_lastsold = 'UPDATE products SET lastSold = %s WHERE id = %s'
 
     values_insert = (data['orderID'], data['productID'], data['amount'], data['quantity'], data['discount'], data['profit'])
-    values_update = (data['quantity'], data['productID'])
+    update_stock_values = (data['quantity'], data['productID'])
+    update_lastsold_values = (data['orderDate'], data['productID']) # orderDate should be retrieved from the request
 
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
             cursor.execute(query_insert, values_insert)
-            cursor.execute(query_update, values_update)
+            cursor.execute(update_stock, update_stock_values)
+            cursor.execute(update_lastsold, update_lastsold_values)
             connection.commit()
         return jsonify({'message': 'Order detail created successfully!'}), 201
     except Exception as e:

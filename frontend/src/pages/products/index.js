@@ -2,9 +2,8 @@
 
 import Layout from "../layout/Layout";
 import {
-  getNumberOfProducts,
-  getProductsByFilter,
   deleteProduct,
+  getAllProducts
 } from "../api/products";
 import IndexTable from "@/components/IndexTable";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
@@ -13,12 +12,8 @@ import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Products() {
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
-  const [count, setCount] = useState(0);
   const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -60,16 +55,16 @@ export default function Products() {
   useEffect(() => {
     async function fetchProducts() {
       setIsLoading(true);
-      const products = await getProductsByFilter(offset, limit);
-      const productsCount = await getNumberOfProducts();
-      setCount(productsCount.count);
+      const products = await getAllProducts();
       setProducts(products);
       setIsLoading(false);
       setDeleted(false);
       setAdded(false);
     }
     fetchProducts();
-  }, [offset, limit, currentPage, deleted, added]);
+  }, [deleted, added]);
+
+  console.log(products);
 
   const headers = ["ID", "Name", "Price", "Cost" , "Category", "Stock"];
   const columns = ["id", "name", "price", "cost" , "categoryID", "stockCount"];
@@ -84,12 +79,7 @@ export default function Products() {
             headers={headers}
             items={products}
             columns={columns}
-            count={count}
             description={"Products Table"}
-            limit={limit}
-            setOffset={setOffset}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
             tableName="products"

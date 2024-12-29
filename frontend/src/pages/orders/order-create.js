@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import { debounce } from "lodash";
 import * as Yup from "yup";
 import Layout from "../layout/Layout";
-import { createOrder } from "../api/orders";
+import { createOrder, createOrderDetail } from "../api/orders";
 import { useRouter } from "next/navigation";
 import { getAllCustomers } from "../api/customers";
 import { getAllUsers } from "../api/users";
@@ -62,7 +62,7 @@ export default function CreateOrderForm() {
       status: Yup.string()
         .max(10, "Max 10 characters")
         .required("Status is required"),
-      productID: Yup.array()
+      productID: Yup.string()
         .min(1, "At least one product must be selected")
         .required("Product ID is required"),
       amount: Yup.number().required("Amount is required"),
@@ -73,7 +73,30 @@ export default function CreateOrderForm() {
 
     onSubmit: debounce(async (values, { resetForm }) => {
       setLoading(true);
-      await createOrder(values);
+      
+      const selectedProduct = products.find(product => product.id === values.productID);
+      const amount = selectedProduct ? values.quantity * parseFloat(selectedProduct.price) : 0;
+
+      await createOrder({
+        id: values.id,
+        customerID: values.customerID,
+        employeeID: values.employeeID,
+        orderDate: values.orderDate,
+        paymentMethod: values.paymentMethod,
+        status: values.status,
+        trackingNumber: values.trackingNumber,
+      });
+
+      await createOrderDetail({
+        orderID: values.id,
+        productID: values.productID,
+        amount: amount,
+        quantity: values.quantity,
+        discount: values.discount,
+        profit: values.profit,
+        orderDate: values.orderDate,
+      });
+
       setLoading(false);
       router.push("/orders");
     }, 300),
@@ -228,31 +251,14 @@ export default function CreateOrderForm() {
             className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
           >
             <option value="">Select a Product</option>
-            {products.map((product) => (
-              <option key={product.id} value={product.id}>
-                {product.name}
+            {products.map(product => (
+              <option key={product.id} value={product.id} disabled={product.stockCount <= 0}>
+                {product.name} {product.stockCount <= 0 ? '(Out of stock)' : ''}
               </option>
             ))}
           </select>
-          {formik.touched.employeeID && formik.errors.productID ? (
+          {formik.touched.productID && formik.errors.productID ? (
             <div className="error-message">{formik.errors.productID}</div>
-          ) : null}
-        </div>
-
-        {/* Amount Field */}
-        <div className="flex flex-col w-full md:w-[calc(50%-12px)]">
-          <label htmlFor="amount">Amount*</label>
-          <input
-            type="number"
-            name="amount"
-            id="amount"
-            value={formik.values.amount}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className="p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-secondary-600"
-          />
-          {formik.touched.amount && formik.errors.amount ? (
-            <div className="error-message">{formik.errors.amount}</div>
           ) : null}
         </div>
 

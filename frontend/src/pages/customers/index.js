@@ -2,9 +2,8 @@
 
 import Layout from "../layout/Layout";
 import {
-  getCustomersWithFilter,
-  getNumberOfCustomers,
   deleteCustomer,
+  getAllCustomers
 } from "../api/customers";
 import IndexTable from "@/components/IndexTable";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
@@ -13,12 +12,8 @@ import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Customers() {
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
-  const [count, setCount] = useState(0);
   const [customers, setCustomers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
 
@@ -60,9 +55,7 @@ export default function Customers() {
   useEffect(() => {
     async function fetchCustomers() {
       setIsLoading(true);
-      const customers = await getCustomersWithFilter(offset, limit);
-      const customersCount = await getNumberOfCustomers();
-      setCount(customersCount.count);
+      const customers = await getAllCustomers();
       setCustomers(customers);
       setIsLoading(false);
       setDeleted(false);
@@ -70,7 +63,7 @@ export default function Customers() {
     }
 
     fetchCustomers();
-  }, [offset, limit, currentPage, deleted, added]);
+  }, [deleted, added]);
 
   const headers = ["ID", "Name", "City", "Email", "Phone"];
   const columns = ["id", "name", "city", "email", "phone"];
@@ -89,12 +82,7 @@ export default function Customers() {
             headers={headers}
             items={customers}
             columns={columns}
-            count={count}
             description={"Customers Table"}
-            limit={limit}
-            setOffset={setOffset}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
             tableName="customers"

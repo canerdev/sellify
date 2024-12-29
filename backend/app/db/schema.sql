@@ -89,7 +89,7 @@ CREATE TABLE shipmentModes (
 
 DROP TABLE IF EXISTS shippingDetails;
 CREATE TABLE shippingDetails (
-    orderID VARCHAR(14) NOT NULL,
+    orderID VARCHAR(14) PRIMARY KEY,
     shipmentModeID INT,
     shippingDate DATE NOT NULL,
     country VARCHAR(50) NOT NULL,
@@ -97,7 +97,6 @@ CREATE TABLE shippingDetails (
     state VARCHAR(50) NOT NULL,
     postalCode VARCHAR(50) NOT NULL,
     region VARCHAR(50) NOT NULL,
-    PRIMARY KEY (orderID),
     FOREIGN KEY (shipmentModeID) REFERENCES shipmentModes(id)
         ON DELETE SET NULL
         ON UPDATE CASCADE,

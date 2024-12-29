@@ -5,6 +5,7 @@ import {
   getNumberOfOrders,
   getOrdersWithFilter,
   deleteOrder,
+  getAllOrders
 } from "../api/orders";
 import IndexTable from "@/components/IndexTable";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
@@ -13,15 +14,10 @@ import { useRouter } from "next/router";
 import Loading from "../loading";
 
 export default function Orders() {
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
-  const [count, setCount] = useState(0);
   const [orders, setOrders] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [deleted, setDeleted] = useState(false);
   const [added, setAdded] = useState(false);
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
 
@@ -60,9 +56,16 @@ export default function Orders() {
   useEffect(() => {
     async function fetchOrders() {
       setIsLoading(true);
-      const orders = await getOrdersWithFilter(offset, limit);
-      const ordersCount = await getNumberOfOrders();
-      setCount(ordersCount.count);
+      const orders = await getAllOrders();
+
+      orders.forEach((item) => {
+        const date = new Date(item.orderDate);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        item.orderDate = `${year}-${month}-${day}`;
+      });
+    
       setOrders(orders);
       setIsLoading(false);
       setDeleted(false);
@@ -70,7 +73,7 @@ export default function Orders() {
     }
 
     fetchOrders();
-  }, [offset, limit, currentPage, deleted, added]);
+  }, [deleted, added]);
 
   const headers = ["ID", "Customer", "Handler ID", "Date", "Status"];
   const columns = ["id", "customerID", "employeeID", "orderDate", "status"];
@@ -89,12 +92,7 @@ export default function Orders() {
             headers={headers}
             items={orders}
             columns={columns}
-            count={count}
             description={"Orders Table"}
-            limit={limit}
-            setOffset={setOffset}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
             onDelete={handleDelete}
             onView={handleView}
             tableName="orders"
