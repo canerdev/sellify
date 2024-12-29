@@ -130,7 +130,6 @@ export async function getLowStockProducts(threshold) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
     const data = await res.json();
-    console.log("API Response:", data); // Add this to debug
     return data;
   } catch (error) {
     console.error("Error fetching low stock products:", error);

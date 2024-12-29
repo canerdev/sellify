@@ -115,7 +115,7 @@ export default function SideBar() {
           <div className="mt-6">
             <div className="flex items-center justify-between mt-6">
               <Link
-                href="/sign-in"
+                href="/"
                 className="transition-colors duration-200 rotate-180 text-gray-400 rtl:rotate-0 hover:text-gray-200"
               >
                 <FaSignOutAlt className="w-5 h-5" />
