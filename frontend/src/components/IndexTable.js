@@ -27,7 +27,7 @@ export default function IndexTable({
     sortable: false,
     width: 160,
     renderCell: (params) => (
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center mt-2 space-x-2">
         <button
           onClick={() => {
             if (description == "Shipping Details Table") {
