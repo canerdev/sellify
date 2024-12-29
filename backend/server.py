@@ -44,8 +44,8 @@ def home():
 def create_product():
     data = request.json
     lastSold = data.get('lastSold', None)
-    query = 'INSERT INTO products (id, name, price, categoryID, stockCount, lastSold) VALUES (%s, %s, %s, %s, %s, %s)'
-    values = (data['id'], data['name'], data['price'], data['categoryID'], data['stockCount'], lastSold)
+    query = 'INSERT INTO products (id, name, price, cost, categoryID, stockCount, lastSold) VALUES (%s, %s, %s, %s, %s, %s)'
+    values = (data['id'], data['name'], data['price'], data['cost'], data['categoryID'], data['stockCount'], lastSold)
 
     try:
         connection = get_db_connection()
@@ -114,8 +114,19 @@ def get_products_by_filter():
 @app.route('/api/products/<string:id>', methods=['PUT'])
 def update_product(id):
     data = request.json
-    query = 'UPDATE products SET id = %s, name = %s, price = %s, categoryID = %s, stockCount = %s, lastSold = %s WHERE id = %s'
-    values = (data['id'], data['name'], data['price'], data['categoryID'], data['stockCount'], data['lastSold'], id)
+
+    lastSold = data.get('lastSold', None)
+    try:
+        if lastSold:
+            parsed_date = datetime.strptime(lastSold, '%a, %d %b %Y %H:%M:%S %Z')
+            formatted_date = parsed_date.strftime('%Y-%m-%d')
+        else:
+            formatted_date = None
+    except ValueError as e:
+        return jsonify({'error': f'Failed to parse lastSold date: {str(e)}'}), 400
+    
+    query = 'UPDATE products SET id = %s, name = %s, price = %s, cost = %s, categoryID = %s, stockCount = %s, lastSold = %s WHERE id = %s'
+    values = (data['id'], data['name'], data['price'], data['cost'] , data['categoryID'], data['stockCount'], formatted_date, id)
 
     try:
         connection = get_db_connection()
