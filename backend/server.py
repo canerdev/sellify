@@ -1476,12 +1476,10 @@ def create_record(table_name):
     finally:
         connection.close()
 
-
-
 @app.route("/")
 def homepage():
-  return 'Hello World!'
-
+    return jsonify({'message': 'Hello World!'})
 
 if __name__ == '__main__':
     app.run(host='localhost', debug=True, port=8080)
+# app.debug = True
